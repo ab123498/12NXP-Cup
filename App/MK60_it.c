@@ -39,7 +39,7 @@ void uart4_handler(void)
         uart_getchar(UART4, &ch_buffer[count]);                    //无限等待接受1个字节
         if(ch_buffer[count] == '\n' || count++ == 79) {
             count = 0;
-            user_flag.b1 = 1;
+            user_flag.b1 = 1;//接收完成标识
         }
     }
 }
