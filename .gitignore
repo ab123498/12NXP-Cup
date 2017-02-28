@@ -2,4 +2,5 @@
 *.bat
 *.eww
 *.url
-
+*.wsdt
+*.wspos
