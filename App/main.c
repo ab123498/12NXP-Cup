@@ -57,16 +57,18 @@ void main()
 	uart_putstr   (UART4 ,"\n\n\necho:\n\n");                 //发送字符串
     set_vector_handler(UART4_RX_TX_VECTORn,uart4_handler);//设置中断服务函数到中断向量表里
     uart_rx_irq_en(UART4);                                //开串口接收中断
-	ftm_pwm_init(FTM0,FTM_CH0,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
+	ftm_pwm_init(FTM0,FTM_CH1,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
                                                           // FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           // port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           // 舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
+    ftm_pwm_init(FTM2,FTM_CH0,300,620);
+    ftm_pwm_init(FTM2,FTM_CH1,300,620);
     bell_init(PTA9,0);                                   // 使能端 输入为 0
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期
 		led_all_turn();                                   
         LCD_DLY_ms(500);
-        //ftm_pwm_duty(FTM0,FTM_CH0,i);                   //改变 占空比 ，K60 输出 PWM 占空比 逐渐增大，电机逐渐 降速
+        //ftm_pwm_duty(FTM0,FTM_CH3,i);                   //改变 占空比 ，K60 输出 PWM 占空比 逐渐增大，电机逐渐 降速
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
         if(user_flag.DW != 0) {
             poll_printf();
