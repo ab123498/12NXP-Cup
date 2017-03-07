@@ -34,12 +34,16 @@
     Dtype read_flash_data(uint16 offset);
     void push_data2flash(void);
     void uart_input_format(void);
+    void adc_conv_init(void);
 
 /*  Declare-------------------------------------------------------------------*/
 	extern uint16 encoder1;                               //定义在MK60_it源文件
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern uint32 span_pit_cycle;                         //定义在MK60_it源文件
     extern int8 ch_buffer[];                              //串口接收缓冲区
+    extern uint16 AD_AMP1_output_temp,AD_AMP2_output_temp,\
+                  AD_AMP3_output_temp,AD_AMP4_output_temp,\
+                  AD_AMP5_output_temp,AD_AMP6_output_temp;
 
 void main()
 {
@@ -52,31 +56,48 @@ void main()
     flash_init();                                       //初始化flash
     flash_erase_sector(SECTOR_NUM);                     //擦除扇区
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
+    adc_conv_init();
     EnableInterrupts;
     uart_init(UART4,115200);
-	uart_putstr   (UART4 ,"\n\n\necho:\n\n");                 //发送字符串
+	uart_putstr   (UART4 ,"\n\n\necho:\n\n");             //发送字符串
     set_vector_handler(UART4_RX_TX_VECTORn,uart4_handler);//设置中断服务函数到中断向量表里
     uart_rx_irq_en(UART4);                                //开串口接收中断
 	ftm_pwm_init(FTM0,FTM_CH1,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
-                                                          // FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
-                                                          // port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
-                                                          // 舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
+                                                          //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
+                                                          //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
+                                                          //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
     ftm_pwm_init(FTM2,FTM_CH0,300,620);
     ftm_pwm_init(FTM2,FTM_CH1,300,620);
-    bell_init(PTA9,0);                                   // 使能端 输入为 0
+    bell_init(PTA9,0);                                    //使能端 输入为 0
 	while(1) {  
-        lptmr_timing_ms(60000);                           //以lptmr测量大循环周期
-		led_all_turn();                                   
-        LCD_DLY_ms(500);
+        lptmr_timing_ms(60000);                           //以lptmr测量大循环周期                                
         //ftm_pwm_duty(FTM0,FTM_CH3,i);                   //改变 占空比 ，K60 输出 PWM 占空比 逐渐增大，电机逐渐 降速
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
         if(user_flag.DW != 0) {
+            LCD_DLY_ms(80);
             poll_printf();
             uart_input_format();
             push_data2flash();
+            LCD_Show_Number(0, 1,AD_AMP1_output_temp);   
+            LCD_Show_Number(96,1,AD_AMP2_output_temp);  
+            LCD_Show_Number(0, 2,AD_AMP3_output_temp);   
+            LCD_Show_Number(96,2,AD_AMP4_output_temp); 
+            LCD_Show_Number(0, 3,AD_AMP5_output_temp);   
+            LCD_Show_Number(96,3,AD_AMP6_output_temp); 
 			//printf("%f",test);
         }
+        span_main_cycle = lptmr_time_get_ms();
 	}
+}
+
+void adc_conv_init( void ) 
+{
+    adc_init(AMP1);
+    adc_init(AMP2);
+    adc_init(AMP3);
+    adc_init(AMP4);
+    adc_init(AMP5);
+    adc_init(AMP6);
 }
 
 void bell_init(PTXn_e bell,uint8 state)
@@ -87,7 +108,7 @@ void bell_init(PTXn_e bell,uint8 state)
 void encoder_init(void)
 {
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
-    pit_init_ms(PIT0, 500);                               //初始化PIT0，定时时间为： 500ms
+    pit_init_ms(PIT0, 50);                               //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     enable_irq (PIT0_IRQn);                               //使能PIT0中断
 }

@@ -23,7 +23,10 @@
     Dtype user_flag;//用户标志结构
     uint32 span_pit_cycle;//pit中断时间
     int8 ch_buffer[81];//串口接收buffer
-    
+    uint16 AD_AMP1_output_temp,AD_AMP2_output_temp,\
+           AD_AMP3_output_temp,AD_AMP4_output_temp,\
+           AD_AMP5_output_temp,AD_AMP6_output_temp;
+
 /*  Declare-------------------------------------------------------------------*/
     extern uint32 span_main_cycle;
 
@@ -34,7 +37,7 @@
 void uart4_handler(void)
 {
     static uint16 count=0;
-    if(uart_query(UART4) == 1 && !user_flag.b1) {                    //接收数据寄存器满
+    if(uart_query(UART4) == 1 && !user_flag.b1) {                  //接收数据寄存器满
         //用户需要处理接收数据
         uart_getchar(UART4, &ch_buffer[count]);                    //无限等待接受1个字节
         if(ch_buffer[count] == '\n' || count++ == 79) {
@@ -61,6 +64,14 @@ void PIT0_IRQHandler(void)
         encoder1=-val;
     PIT_Flag_Clear(PIT0);                               //清中断标志位
     user_flag.b0 = 1;                                   //b0 用于大循环printf
+    
+    AD_AMP1_output_temp = adc_ave(AMP1,ADC_12bit,3);
+    AD_AMP2_output_temp = adc_ave(AMP2,ADC_12bit,3);
+    AD_AMP3_output_temp = adc_ave(AMP3,ADC_12bit,3);
+    AD_AMP4_output_temp = adc_ave(AMP4,ADC_12bit,3);
+    AD_AMP5_output_temp = adc_ave(AMP5,ADC_12bit,3);
+    AD_AMP6_output_temp = adc_ave(AMP6,ADC_12bit,3);
+    
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
 }
 

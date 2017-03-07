@@ -4,26 +4,24 @@
 #include  "common.h"
 
 /*
- * Include ÓÃ»§×Ô¶¨ÒåµÄÍ·ÎÄ¼ş
+ * Include ç”¨æˆ·è‡ªå®šä¹‰çš„å¤´æ–‡ä»¶
  */
+   
 #include  "MK60_wdog.h"
-#include  "MK60_gpio.h"     //IO¿Ú²Ù×÷
-#include  "MK60_uart.h"     //´®¿Ú
+#include  "MK60_gpio.h"     //IOå£æ“ä½œ
+#include  "MK60_uart.h"     //ä¸²å£
 #include  "MK60_SysTick.h"
-#include  "MK60_lptmr.h"    //µÍ¹¦ºÄ¶¨Ê±Æ÷(ÑÓÊ±)
+#include  "MK60_lptmr.h"    //ä½åŠŸè€—å®šæ—¶å™¨(å»¶æ—¶)
 #include  "MK60_pit.h"      //PIT
 #include  "MK60_FLASH.h"    //FLASH
 #include  "MK60_FTM.h"
 #include  "MK60_spi.h"
 #include  "MK60_i2c.h"
-
+#include  "MK60_adc.h"
 #include  "VCAN_LED.H"          //LED
 #include  "VCAN_KEY.H"          //KEY
 #include  "oled.h"			//OLED
-
-
-
-
-
-#include  "VCAN_computer.h"     //¶à¹¦ÄÜµ÷ÊÔÖúÊÖ
+#include "ADC_process.h"
+#include  "VCAN_computer.h"     //å¤šåŠŸèƒ½è°ƒè¯•åŠ©æ‰‹
+   
 #endif  //__INCLUDE_H__
