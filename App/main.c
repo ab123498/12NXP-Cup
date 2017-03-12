@@ -24,35 +24,31 @@
 
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
-	float test=0.123;
 
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
 	void encoder_init(void);
-    void poll_printf(void);
     void write_flash_data(Dtype flash_area_write , uint16 offset);
     Dtype read_flash_data(uint16 offset);
     void push_data2flash(void);
-    void uart_input_format(void);
     void adc_conv_init(void);
+    void set_ftm_ser(void) ;
+    void cut_AD_pause_init(void);
 
 /*  Declare-------------------------------------------------------------------*/
 	extern uint16 encoder1;                               //定义在MK60_it源文件
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern uint32 span_pit_cycle;                         //定义在MK60_it源文件
-    extern int8 ch_buffer[];                              //串口接收缓冲区
-    extern uint16 AD_AMP1_output_temp,AD_AMP2_output_temp,\
-                  AD_AMP3_output_temp,AD_AMP4_output_temp,\
-                  AD_AMP5_output_temp,AD_AMP6_output_temp;
 
 void main()
 {
 	led_all_init();
 	encoder_init();
+    //cut_AD_pause_init();
 	DisableInterrupts;
 	LCD_Init(); 
 	LCD_DLY_ms(50);
-    LCD_P6x8Str(0,0,"imTim12138 94NB 946");
+    LCD_P6x8Str(6,0,"imTim12138 94NB 946");
     flash_init();                                       //初始化flash
     flash_erase_sector(SECTOR_NUM);                     //擦除扇区
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
@@ -66,24 +62,17 @@ void main()
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
-    ftm_pwm_init(FTM2,FTM_CH0,300,620);
-    ftm_pwm_init(FTM2,FTM_CH1,300,620);
+    ftm_pwm_init(FTM2,FTM_CH0,10000,100);
+    ftm_pwm_init(FTM2,FTM_CH1,10000,0);
     bell_init(PTA9,0);                                    //使能端 输入为 0
 	while(1) {  
-        lptmr_timing_ms(60000);                           //以lptmr测量大循环周期                                
-        //ftm_pwm_duty(FTM0,FTM_CH3,i);                   //改变 占空比 ，K60 输出 PWM 占空比 逐渐增大，电机逐渐 降速
+        lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
         if(user_flag.DW != 0) {
-            LCD_DLY_ms(80);
             poll_printf();
             uart_input_format();
             push_data2flash();
-            LCD_Show_Number(0, 1,AD_AMP1_output_temp);   
-            LCD_Show_Number(96,1,AD_AMP2_output_temp);  
-            LCD_Show_Number(0, 2,AD_AMP3_output_temp);   
-            LCD_Show_Number(96,2,AD_AMP4_output_temp); 
-            LCD_Show_Number(0, 3,AD_AMP5_output_temp);   
-            LCD_Show_Number(96,3,AD_AMP6_output_temp); 
+            set_ftm_ser();
 			//printf("%f",test);
         }
         span_main_cycle = lptmr_time_get_ms();
@@ -108,35 +97,16 @@ void bell_init(PTXn_e bell,uint8 state)
 void encoder_init(void)
 {
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
-    pit_init_ms(PIT0, 50);                               //初始化PIT0，定时时间为： 50ms
+    pit_init_us(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     enable_irq (PIT0_IRQn);                               //使能PIT0中断
 }
 
-void poll_printf(void)
-{   
-#ifdef DEBUG
-    if(user_flag.b0) {//大循环内有关输出
-        printf("encoder1:%04d \n",encoder1);
-        printf("span_main_cycle:%04d ms\n",span_main_cycle);
-        printf("span_pit_cycle:%04d ms\n\n",span_pit_cycle);
-        user_flag.b0=0;
-    }
-#endif
-}
-
-void uart_input_format(void)
+void cut_AD_pause_init(void)
 {
-    int16 temp;
-	
-    if(user_flag.b1) {//接收到数据需要处理
-        if(strcmp(ch_buffer,"flash_test\n") == 0)
-            user_flag.b2=1;
-        sscanf(strchr(ch_buffer, ' ')+1,"%hd",&temp);//将空格后的数值存入变量
-		printf("%hd\n",temp);
-        memset(ch_buffer,0,80);
-        user_flag.b1=0;
-    }
+    pit_init_us(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
+    set_vector_handler(PIT1_VECTORn ,PIT1_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
+    enable_irq (PIT1_IRQn);                               //使能PIT0中断
 }
 
 void push_data2flash(void)
