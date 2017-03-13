@@ -23,9 +23,12 @@
     Dtype user_flag;//用户标志结构
     uint32 span_pit_cycle;//pit中断时间
     int8 ch_buffer[81];//串口接收buffer
+    uint16 ser_temp=620;
     
 /*  Declare-------------------------------------------------------------------*/
     extern uint32 span_main_cycle;
+    extern void DirectionVoltageSigma(void);
+    extern uint16  AD_conv[CONV_TIMES];
 
 /*!
  *  @brief      UART4中断服务函数
@@ -34,7 +37,7 @@
 void uart4_handler(void)
 {
     static uint16 count=0;
-    if(uart_query(UART4) == 1 && !user_flag.b1) {                    //接收数据寄存器满
+    if(uart_query(UART4) == 1 && !user_flag.b1) {                  //接收数据寄存器满
         //用户需要处理接收数据
         uart_getchar(UART4, &ch_buffer[count]);                    //无限等待接受1个字节
         if(ch_buffer[count] == '\n' || count++ == 79) {
@@ -51,6 +54,7 @@ void uart4_handler(void)
 void PIT0_IRQHandler(void)
 {
     int16 val;
+    static uint32 PIT0_Time_count;
     
     lptmr_timing_ms(65535);
     val = ftm_quad_get(FTM1);                           //获取FTM 正交解码 的脉冲数(负数表示反方向)
@@ -59,8 +63,20 @@ void PIT0_IRQHandler(void)
         encoder1=val;
     else
         encoder1=-val;
-    PIT_Flag_Clear(PIT0);                               //清中断标志位
-    user_flag.b0 = 1;                                   //b0 用于大循环printf
+    
+    PIT0_Time_count++;
+    //DirectionVoltageSigma(); 
+    
+    if(PIT0_Time_count%500==0) {
+        user_flag.b0 = 1;                                   //b0 用于大循环printf
+        ser_ctrl();
+    }
+    if(PIT0_Time_count==5000) {
+        PIT0_Time_count=0;
+        
+    }
+    proc_AD_conv();
+    
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
+    PIT_Flag_Clear(PIT0);                               //清中断标志位
 }
-

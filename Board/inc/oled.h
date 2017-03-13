@@ -1,16 +1,16 @@
 #ifndef	_OLED_H_
 #define _OLED_H_
 
-#define RESET_cfg  PTC12
-#define DC_cfg     PTC10
-#define D1_cfg     PTC14
-#define D0_cfg     PTC16
+#define RESET_cfg  PTC17
+#define DC_cfg     PTC16
+#define D1_cfg     PTC18
+#define D0_cfg     PTC19
 
-#define RESET  PTC12_OUT
-#define DC     PTC10_OUT
-#define D1     PTC14_OUT
-#define D0     PTC16_OUT
-
+#define RESET  PTC17_OUT
+#define DC     PTC16_OUT
+#define D1     PTC18_OUT
+#define D0     PTC19_OUT
+//OLED:GND VCC D0 D1 RES DC CS
 
 //extern uint8 beyond96x64[512];
 void LCD_DLY_ms(uint32 ms);

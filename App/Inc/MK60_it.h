@@ -27,5 +27,6 @@
  */
 void uart4_handler(void);
 void PIT0_IRQHandler(void);
+void PIT1_IRQHandler(void);
 
 #endif  //__MK60_IT_H__

@@ -53,7 +53,7 @@ typedef union
         uint32 b0: 1;//大循环printf使能
         uint32 b1: 1;//串口接收完成
         uint32 b2: 1;//允许flash测试消息
-        uint32 b3: 1;
+        uint32 b3: 1;//舵机数据输入标志
         uint32 b4: 1;
         uint32 b5: 1;
         uint32 b6: 1;
