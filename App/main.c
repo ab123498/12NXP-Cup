@@ -62,7 +62,7 @@ void main()
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
-    ftm_pwm_init(FTM2,FTM_CH0,10000,100);
+    ftm_pwm_init(FTM2,FTM_CH0,10000,150);
     ftm_pwm_init(FTM2,FTM_CH1,10000,0);
     bell_init(PTA9,0);                                    //使能端 输入为 0
 	while(1) {  

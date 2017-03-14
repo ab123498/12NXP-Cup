@@ -14,7 +14,7 @@
     float position1[4],piancha[4],positiony,ADx1[5],psum,xianzhiflag,positionerror,d,e,f,kpc=1,kdc_1;
     int steer_PWM;
     uint8 zhijiao_flag;
-    uint16 temp_serial=110;
+    uint16 temp_serial=100;
     
 /*  Function declaration------------------------------------------------------*/
     uint16 abs_jdz(int X);
@@ -60,17 +60,17 @@ void ser_ctrl(void)
     LCD_Show_Number(0,3  ,(uint16)ADflag1);
     position1[0] = (int)(ADflag1*(float)temp_serial); 
     if(position1[0]<0)                      
-        position1[0]=position1[0]; 
+        position1[0]=-position1[0]; 
     if(right0<left0)                   //方向偏移标标志处理
         position1[0]=-position1[0];
     
-    str_inc = (int)(0.55*position1[0]*(((right0+right0/2+right1/2)/2-left0+left0/2+left1/2)/2));
+    str_inc = (int)(0.8*position1[0]);
     //str_inc= ((left0+left1)/2)-((right0+right1)/2);
     //if(left1>left0 && left1>right0 && left1>right1)
     //    str_inc = 520;
     //if(right1>right0 && right1>left0 && right1>left1)
     //    str_inc = 720;
-    ser_pwm = 620-str_inc;
+    ser_pwm = 620+str_inc;
     if(ser_pwm>720) ser_pwm=720;
     if(ser_pwm<520) ser_pwm=520;
     ftm_pwm_duty(FTM0,FTM_CH1,ser_pwm);
