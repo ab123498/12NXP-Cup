@@ -7,4 +7,5 @@
 /*  Function declaration------------------------------------------------------*/
     extern void poll_printf(void);
     extern void uart_input_format(void);
+    void OutPut_Data();
 #endif /*end of DEBUGOUTPUT*/

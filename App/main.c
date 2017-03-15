@@ -24,7 +24,7 @@
 
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
-
+    
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
 	void encoder_init(void);
@@ -34,12 +34,15 @@
     void adc_conv_init(void);
     void set_ftm_ser(void) ;
     void cut_AD_pause_init(void);
+    void vscope_test( void ) ;
 
 /*  Declare-------------------------------------------------------------------*/
 	extern uint16 encoder1;                               //定义在MK60_it源文件
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern uint32 span_pit_cycle;                         //定义在MK60_it源文件
-
+    extern AD_V ad_1,ad_2,ad_3,ad_4;
+    extern int16 OutData[4];
+    
 void main()
 {
 	led_all_init();
@@ -76,8 +79,20 @@ void main()
 			//printf("%f",test);
         }
         span_main_cycle = lptmr_time_get_ms();
+        vscope_test();
 	}
 }
+
+void vscope_test( void ) 
+{
+  //Read_ADC(10);
+  OutData[0] = ad_1.max;
+  OutData[1] = ad_2.max;
+  OutData[2] = ad_3.max;
+  OutData[3] = ad_4.max;
+  OutPut_Data(OutData);
+}
+
 
 void adc_conv_init( void ) 
 {
