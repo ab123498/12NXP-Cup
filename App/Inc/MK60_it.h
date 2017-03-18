@@ -25,7 +25,7 @@
  *       #undef  VECTOR_003                         先取消映射到中断向量表里的中断函数地址宏定义
  *       #define VECTOR_003    HardFault_Handler    重新定义硬件上访中断服务函数
  */
-void uart4_handler(void);
+void uart5_handler(void);
 void PIT0_IRQHandler(void);
 void PIT1_IRQHandler(void);
 

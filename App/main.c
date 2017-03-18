@@ -24,6 +24,7 @@
 
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
+    uint32 temp_speed;
     
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
@@ -57,10 +58,10 @@ void main()
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
     adc_conv_init();
     EnableInterrupts;
-    uart_init(UART4,115200);
-	uart_putstr   (UART4 ,"\n\n\necho:\n\n");             //发送字符串
-    set_vector_handler(UART4_RX_TX_VECTORn,uart4_handler);//设置中断服务函数到中断向量表里
-    uart_rx_irq_en(UART4);                                //开串口接收中断
+    uart_init(UART5,115200);
+	//uart_putstr   (UART5 ,"\n\n\necho:\n\n");             //发送字符串
+    set_vector_handler(UART5_RX_TX_VECTORn,uart5_handler);//设置中断服务函数到中断向量表里
+    uart_rx_irq_en(UART5);                                //开串口接收中断
 	ftm_pwm_init(FTM0,FTM_CH1,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
@@ -78,6 +79,7 @@ void main()
             set_ftm_ser();
 			//printf("%f",test);
         }
+        ftm_pwm_duty(FTM2,FTM_CH0,temp_speed);
         span_main_cycle = lptmr_time_get_ms();
         vscope_test();
 	}
