@@ -21,7 +21,10 @@
 
 /*  Define--------------------------------------------------------------------*/
     #define SECTOR_NUM  (FLASH_SECTOR_NUM-1)              //尽量用最后面的扇区，确保安全
-
+    #define BELLPORT PTA9
+    #define BELLOFF  0
+    #define BELLON   1
+   
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
     uint32 temp_speed;
@@ -65,13 +68,13 @@ void main()
     set_vector_handler(UART5_RX_TX_VECTORn,uart5_handler);//设置中断服务函数到中断向量表里
     NVIC_SetPriority(UART5_RX_TX_IRQn, 0x40);             //优先级（ 01 ）B
     uart_rx_irq_en(UART5);                                //开串口接收中断
-	ftm_pwm_init(STEERFTM,STEERFTM_CH,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
+	ftm_pwm_init(STEERFTM,STEERFTM_CH,300,620);           //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
     ftm_pwm_init(MOTORFTM,MOTORFTM_A,10000,100);
     ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000,0);
-    bell_init(PTA9,0);                                    //使能端 输入为 0
+    bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
