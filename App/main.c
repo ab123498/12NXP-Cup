@@ -24,6 +24,7 @@
 
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
+    uint32 temp_speed;
     
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
@@ -56,20 +57,20 @@ void main()
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
     adc_conv_init();
     EnableInterrupts;
-    void NVIC_Config();
+    NVIC_Config();
     encoder_init();
     //cut_AD_pause_init();
-    uart_init(UART4,115200);
-	uart_putstr   (UART4 ,"\n\n\necho:\n\n");             //发送字符串
-    set_vector_handler(UART4_RX_TX_VECTORn,uart4_handler);//设置中断服务函数到中断向量表里
-    
-    uart_rx_irq_en(UART4);                                //开串口接收中断
-	ftm_pwm_init(FTM0,FTM_CH1,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
+    uart_init(UART5,115200);
+	uart_putstr   (UART5 ,"\n\n\necho:\n\n");             //发送字符串
+    set_vector_handler(UART5_RX_TX_VECTORn,uart5_handler);//设置中断服务函数到中断向量表里
+    NVIC_SetPriority(UART5_RX_TX_IRQn, 0x40);             //优先级（ 01 ）B
+    uart_rx_irq_en(UART5);                                //开串口接收中断
+	ftm_pwm_init(STEERFTM,STEERFTM_CH,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
-    ftm_pwm_init(FTM2,FTM_CH0,10000,100);
-    ftm_pwm_init(FTM2,FTM_CH1,10000,0);
+    ftm_pwm_init(MOTORFTM,MOTORFTM_A,10000,100);
+    ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000,0);
     bell_init(PTA9,0);                                    //使能端 输入为 0
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
@@ -79,6 +80,7 @@ void main()
             uart_input_format();
             push_data2flash();
             set_ftm_ser();
+            ftm_pwm_duty(MOTORFTM,MOTORFTM_A,temp_speed);
 			//printf("%f",test);
         }
         span_main_cycle = lptmr_time_get_ms();
@@ -120,7 +122,7 @@ void bell_init(PTXn_e bell,uint8 state)
 void encoder_init(void)
 {
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
-    pit_init_us(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
+    pit_init_ms(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     NVIC_SetPriority(PIT0_IRQn, 0x80);                    //优先级（ 10 ）B
     enable_irq (PIT0_IRQn);                               //使能PIT0中断
@@ -128,7 +130,7 @@ void encoder_init(void)
 
 void cut_AD_pause_init(void)
 {
-    pit_init_us(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
+    pit_init_ms(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT1_VECTORn ,PIT1_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     NVIC_SetPriority(PIT1_IRQn, 0xC0);                    //优先级（ 11 ）B
     enable_irq (PIT1_IRQn);                               //使能PIT0中断

@@ -75,7 +75,7 @@ void ser_ctrl(void)
     ser_pwm = 620+str_inc;
     if(ser_pwm>720) ser_pwm=720;
     if(ser_pwm<520) ser_pwm=520;
-    ftm_pwm_duty(FTM0,FTM_CH1,ser_pwm);
+    ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);
     
     
     

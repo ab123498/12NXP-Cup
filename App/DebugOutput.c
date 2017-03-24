@@ -14,6 +14,8 @@
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern int8 ch_buffer[];                              //串口接收缓冲区
     extern uint16 temp_serial;
+    extern uint32 temp_speed;
+ 
            
 unsigned short CRC_CHECK(unsigned char *Buf, unsigned char CRC_CNT)
 {
@@ -77,8 +79,8 @@ void uart_input_format(void)
     if(user_flag.b1) {//接收到数据需要处理
         if(strcmp(ch_buffer,"flash_test\n") == 0)
             user_flag.b2=1;
-        sscanf(strchr(ch_buffer, ' ')+1,"%hd",&temp_serial);//将空格后的数值存入变量
-		printf("%hd\n",temp_serial);
+        sscanf(strchr(ch_buffer, ' ')+1,"%ld",&temp_speed);//将空格后的数值存入变量
+		printf("%ld\n",temp_speed);
         memset(ch_buffer,0,80);
         user_flag.b1=0;
     }

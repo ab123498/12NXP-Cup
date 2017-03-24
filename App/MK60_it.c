@@ -34,12 +34,13 @@
  *  @brief      UART4中断服务函数
  *  @since      v5.0
  */
-void uart4_handler(void)
+void uart5_handler(void)
 {
     static uint16 count=0;
-    if(uart_query(UART4) == 1 && !user_flag.b1) {                  //接收数据寄存器满
+    if(uart_query(UART5) == 1 && !user_flag.b1) {                  //接收数据寄存器满
         //用户需要处理接收数据
-        uart_getchar(UART4, &ch_buffer[count]);                    //无限等待接受1个字节
+        uart_getchar(UART5, &ch_buffer[count]);                    //无限等待接受1个字节
+        putchar(ch_buffer[count]);
         if(ch_buffer[count] == '\n' || count++ == 79) {
             count = 0;
             user_flag.b1 = 1;//接收完成标识
@@ -69,6 +70,7 @@ void PIT0_IRQHandler(void)
     
     if(PIT0_Time_count%500==0) {
         user_flag.b0 = 1;                                   //b0 用于大循环printf
+        printf("heart\n");
         ser_ctrl();
     }
     if(PIT0_Time_count==5000) {

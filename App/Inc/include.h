@@ -25,5 +25,6 @@
 #include  "VCAN_computer.h"     //多功能调试助手
 #include "steer.h"
 #include "DebugOutput.h"
+#include "speed.h"
    
 #endif  //__INCLUDE_H__

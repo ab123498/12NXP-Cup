@@ -1,11 +1,11 @@
-#ifndef __STEER_H__
-#define __STEER_H__
+#ifndef __header_H__
+#define __header_H__
 /*  Define--------------------------------------------------------------------*/
-#define STEERFTM        FTM0
-#define STEERFTM_CH     FTM_CH1
+#define MOTORFTM FTM2
+#define MOTORFTM_A FTM_CH0
+#define MOTORFTM_B FTM_CH1
 /*  Enum----------------------------------------------------------------------*/
 
 /*  Function declaration------------------------------------------------------*/
-extern void ser_ctrl(void);
 
-#endif /*end of STEER*/
+#endif /*end of header*/
