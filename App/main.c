@@ -125,7 +125,7 @@ void bell_init(PTXn_e bell,uint8 state)
 void encoder_init(void)
 {
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
-    pit_init_ms(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
+    pit_init_us(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     NVIC_SetPriority(PIT0_IRQn, 0x80);                    //优先级（ 10 ）B
     enable_irq (PIT0_IRQn);                               //使能PIT0中断
@@ -133,7 +133,7 @@ void encoder_init(void)
 
 void cut_AD_pause_init(void)
 {
-    pit_init_ms(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
+    pit_init_us(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT1_VECTORn ,PIT1_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     NVIC_SetPriority(PIT1_IRQn, 0xC0);                    //优先级（ 11 ）B
     enable_irq (PIT1_IRQn);                               //使能PIT0中断
@@ -154,10 +154,10 @@ void write_flash_data(Dtype flash_area_write , uint16 offset)
 {
     uint32 data32;
     
-    if( 1 == flash_write(SECTOR_NUM, offset, flash_area_write.DW) ) {  
-        //写入数据到扇区，偏移地址为0，必须一次写入4字节
-        //if是用来检测是否写入成功，写入成功了就读取
-        printf("write echo:\n");
+    if( 1 == flash_write(SECTOR_NUM, offset, flash_area_write.DW) ) {  //写入数据到扇区，偏移地址为0，必须一次写入4字节
+        printf("write echo:\n");                                        //if是用来检测是否写入成功，写入成功了就读取
+        
+        
         data32 = flash_read(SECTOR_NUM, 0, uint32);  //读取4字节
         printf("32bit:0x%08x\n\n", data32);
     }
