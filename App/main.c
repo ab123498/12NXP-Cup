@@ -79,7 +79,7 @@ void main()
 			//printf("%f",test);
         }
         span_main_cycle = lptmr_time_get_ms();
-        vscope_test();
+        //vscope_test();
 	}
 }
 

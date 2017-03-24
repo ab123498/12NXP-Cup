@@ -14,12 +14,7 @@
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern int8 ch_buffer[];                              //串口接收缓冲区
     extern uint16 temp_serial;
-    
-  
-             
-                
-    
-
+           
 unsigned short CRC_CHECK(unsigned char *Buf, unsigned char CRC_CNT)
 {
     unsigned short CRC_Temp;
