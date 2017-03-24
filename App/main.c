@@ -34,7 +34,8 @@
     void adc_conv_init(void);
     void set_ftm_ser(void) ;
     void cut_AD_pause_init(void);
-    void vscope_test( void ) ;
+    void vscope_test( void );
+    void NVIC_Config( void );
 
 /*  Declare-------------------------------------------------------------------*/
 	extern uint16 encoder1;                               //定义在MK60_it源文件
@@ -46,8 +47,6 @@
 void main()
 {
 	led_all_init();
-	encoder_init();
-    //cut_AD_pause_init();
 	DisableInterrupts;
 	LCD_Init(); 
 	LCD_DLY_ms(50);
@@ -57,9 +56,13 @@ void main()
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
     adc_conv_init();
     EnableInterrupts;
+    void NVIC_Config();
+    encoder_init();
+    //cut_AD_pause_init();
     uart_init(UART4,115200);
 	uart_putstr   (UART4 ,"\n\n\necho:\n\n");             //发送字符串
     set_vector_handler(UART4_RX_TX_VECTORn,uart4_handler);//设置中断服务函数到中断向量表里
+    
     uart_rx_irq_en(UART4);                                //开串口接收中断
 	ftm_pwm_init(FTM0,FTM_CH1,300,620);                   //初始化 FTM PWM ，使用 FTM0_CH3，频率为10k ，占空比为 100 / FTM0_PRECISON
                                                           //FTM0_PRECISON 配置 为 100 ，即占空比 为 100%
@@ -81,6 +84,11 @@ void main()
         span_main_cycle = lptmr_time_get_ms();
         //vscope_test();
 	}
+}
+
+void NVIC_Config( void )
+{
+    NVIC_SetPriorityGrouping(0xC0);                        //2位优先级
 }
 
 void vscope_test( void ) 
@@ -114,6 +122,7 @@ void encoder_init(void)
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
     pit_init_us(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
+    NVIC_SetPriority(PIT0_IRQn, 0x80);                    //优先级（ 10 ）B
     enable_irq (PIT0_IRQn);                               //使能PIT0中断
 }
 
@@ -121,6 +130,7 @@ void cut_AD_pause_init(void)
 {
     pit_init_us(PIT1, 5);                                 //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT1_VECTORn ,PIT1_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
+    NVIC_SetPriority(PIT1_IRQn, 0xC0);                    //优先级（ 11 ）B
     enable_irq (PIT1_IRQn);                               //使能PIT0中断
 }
 
