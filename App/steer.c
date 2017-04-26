@@ -11,7 +11,8 @@
     uint16 kdc;
     uint8 num;
     int steer_inc;
-    float position1[4],piancha[4],positiony,ADx1[5],psum,xianzhiflag,positionerror,d,e,f,kpc=1,kdc_1;
+    float position1[4],piancha[4],positiony,ADx1[5],psum,\
+        xianzhiflag,positionerror,d,e,f,kpc=0.6,kdc_1=0;
     int steer_PWM;
     uint8 zhijiao_flag;
     uint16 temp_serial=120;
@@ -53,25 +54,26 @@ void ser_ctrl(void)
 {    
     int16 str_inc;
     uint16 ser_pwm;
-    //for(int i=4;i>0;i--)
-    //    position1[i]=position1[i-1]; 
+    
+    for(int i=4;i>0;i--)
+        position1[i]=position1[i-1];
     AD_dif1=(left0+left1)-(right0+right1);//x+y-z-w;
-    AD_sum1=left0+right0+left1+right1;  
-    ADflag1 = (float)AD_dif1/(float)AD_sum1;  
+    AD_sum1=left0+right0+left1+right1;
+    ADflag1 = (float)AD_dif1/(float)AD_sum1;
     LCD_Show_Number(0,3  ,(uint16)ADflag1);
     position1[0] = (int)(ADflag1*(float)temp_serial); 
     if(position1[0]<0)                      
         position1[0]=-position1[0]; 
-   temp_speed=1.8*(100-position1[0]);
-     if (position1[0]>=70)
-      temp_speed=100;
+    
     if(right0<left0)                   //方向偏移标标志处理
         position1[0]=-position1[0];
         
-     
+    positionerror = position1[0]-position1[1];
     
-    str_inc = (int)(0.6*position1[0]);
-      
+    str_inc = (int)(kpc*position1[0]+kdc_1*positionerror);
+    temp_speed=(int)( 1.5*(100-abs(str_inc)) );
+    if(abs(str_inc)>=70)
+        temp_speed=80;
     //str_inc= ((left0+left1)/2)-((right0+right1)/2);
     //if(left1>left0 && left1>right0 && left1>right1)
     //    str_inc = 520;

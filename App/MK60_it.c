@@ -71,7 +71,7 @@ void PIT0_IRQHandler(void)
     PIT0_Time_count++;
     //DirectionVoltageSigma(); 
     
-    if(PIT0_Time_count%500==0) {
+    if(PIT0_Time_count%300==0) {
         user_flag.b0 = 1;                                   //b0 用于大循环printf
         ser_ctrl();
     }
