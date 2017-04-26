@@ -66,7 +66,7 @@ void ser_ctrl(void)
         positionerror = position1[0]-position1[1];
     
     
-    str_inc = (int)(0.8*position1[0]);
+    str_inc = (int)(1*position1[0]);
     //str_inc= ((left0+left1)/2)-((right0+right1)/2);
     //if(left1>left0 && left1>right0 && left1>right1)
     //    str_inc = 520;
