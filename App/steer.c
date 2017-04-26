@@ -25,6 +25,7 @@
     extern int AD_dif1,AD_sum1,AD_dif2,AD_sum2,AD_flag1,AD_flag2;
     extern uint8 zhijiao_flag;
     extern uint16 right0,right1,left1,left0;
+    extern uint32 temp_speed;
     
 float QuZongZhi(float adc_i,float adc_j,float adc_k)
 {
@@ -61,12 +62,16 @@ void ser_ctrl(void)
     position1[0] = (int)(ADflag1*(float)temp_serial); 
     if(position1[0]<0)                      
         position1[0]=-position1[0]; 
+   temp_speed=1.8*(100-position1[0]);
+     if (position1[0]>=70)
+      temp_speed=100;
     if(right0<left0)                   //方向偏移标标志处理
         position1[0]=-position1[0];
-        positionerror = position1[0]-position1[1];
+        
+     
     
-    
-    str_inc = (int)(1*position1[0]);
+    str_inc = (int)(0.6*position1[0]);
+      
     //str_inc= ((left0+left1)/2)-((right0+right1)/2);
     //if(left1>left0 && left1>right0 && left1>right1)
     //    str_inc = 520;
