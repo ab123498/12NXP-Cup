@@ -47,10 +47,13 @@
     extern uint32 span_pit_cycle;                         //定义在MK60_it源文件
     extern AD_V ad_1,ad_2,ad_3,ad_4;
     extern int16 OutData[4];
+    extern uint16 time_sum;
     
 void main()
 {
+    uint16 time_sum_close;
 	led_all_init();
+    bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
 	DisableInterrupts;
 	LCD_Init();
 	LCD_DLY_ms(50);
@@ -74,18 +77,24 @@ void main()
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
     ftm_pwm_init(MOTORFTM,MOTORFTM_A,10000, 0);
     ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000, temp_speed);
-    bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
+    
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
+        proc_AD_conv();
         if(user_flag.DW != 0) {
             poll_printf();
             uart_input_format();
             push_data2flash();
             set_ftm_ser();
             ftm_pwm_duty(MOTORFTM,MOTORFTM_A,temp_speed);
+            if(time_sum != time_sum_close) {      
+                printf("%ds\n",time_sum);
+                time_sum_close = time_sum;
+            }
 			//printf("%f",test);
         }
+        
         span_main_cycle = lptmr_time_get_ms();
         //vscope_test();
 	}
@@ -125,7 +134,7 @@ void bell_init(PTXn_e bell,uint8 state)
 void encoder_init(void)
 {
     ftm_quad_init(FTM1);                                  //FTM1 正交解码初始化（所用的管脚可查 port_cfg.h ）
-    pit_init_us(PIT0, 10);                                //初始化PIT0，定时时间为： 50ms
+    pit_init_ms(PIT0, 1);                                //初始化PIT0，定时时间为： 50ms
     set_vector_handler(PIT0_VECTORn ,PIT0_IRQHandler);    //设置PIT0的中断服务函数为 PIT0_IRQHandler
     NVIC_SetPriority(PIT0_IRQn, 0x80);                    //优先级（ 10 ）B
     enable_irq (PIT0_IRQn);                               //使能PIT0中断

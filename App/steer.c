@@ -60,7 +60,7 @@ void ser_ctrl(void)
     AD_dif1=(left0+left1)-(right0+right1);//x+y-z-w;
     AD_sum1=left0+right0+left1+right1;
     ADflag1 = (float)AD_dif1/(float)AD_sum1;
-    LCD_Show_Number(0,3  ,(uint16)ADflag1);
+    LCD_Show_Number(52,3  ,(uint16)ADflag1);
     position1[0] = (int)(ADflag1*(float)temp_serial); 
     if(position1[0]<0)                      
         position1[0]=-position1[0]; 

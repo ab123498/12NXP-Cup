@@ -143,12 +143,12 @@ void proc_AD_conv(void)
     ad_4.AD[chain_num % CHAIN_NUM] = adc_ave(AMPright1,ADC_12bit,3);
     
     if(chain_num % CHAIN_NUM ==0) {
-        quicksort(ad_1.AD,CHAIN_NUM);
-        quicksort(ad_2.AD,CHAIN_NUM);
-        quicksort(ad_3.AD,CHAIN_NUM);
-        quicksort(ad_4.AD,CHAIN_NUM);
-        quicksort(ad_5.AD,CHAIN_NUM);
-        quicksort(ad_6.AD,CHAIN_NUM);
+        //quicksort(ad_1.AD,CHAIN_NUM);
+        //quicksort(ad_2.AD,CHAIN_NUM);
+        //quicksort(ad_3.AD,CHAIN_NUM);
+        //quicksort(ad_4.AD,CHAIN_NUM);
+        //quicksort(ad_5.AD,CHAIN_NUM);
+        //quicksort(ad_6.AD,CHAIN_NUM);
         ad_1.max = ad_1.AD[CHAIN_NUM-1];
         ad_2.max = ad_2.AD[CHAIN_NUM-1];
         ad_3.max = ad_3.AD[CHAIN_NUM-1];
@@ -168,7 +168,7 @@ void proc_AD_conv(void)
         right0= ad_4.max/33;  //E18
         left0 = ad_2.max/33;  //E20
         left1 = ad_1.max/33;  //E21
-        if(chain_num % 100 ==0) {
+        if(chain_num % 1000 ==0) {
             LCD_Show_Number(0, 1 ,ad_1.max);       //OLED显示 AD数据
             LCD_Show_Number(96, 1,ad_3.max);
             LCD_Show_Number(0,2  ,ad_2.max);

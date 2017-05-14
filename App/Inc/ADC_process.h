@@ -15,7 +15,7 @@
     #define AMPright1 AMP1
     #define AMPright2 AMP2
     #define CONV_TIMES 10
-    #define CHAIN_NUM 50
+    #define CHAIN_NUM 2
     typedef struct 
     {
         uint16 max;
