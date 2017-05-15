@@ -3,6 +3,9 @@
 
 #include  "common.h"
 
+    #define BELLPORT PTA9
+    #define BELLOFF  0
+    #define BELLON   1
 /*
  * Include 用户自定义的头文件
  */
@@ -18,6 +21,7 @@
 #include  "MK60_spi.h"
 #include  "MK60_i2c.h"
 #include  "MK60_adc.h"
+#include  "MK60_DWT.h"
 #include  "VCAN_LED.H"          //LED
 #include  "VCAN_KEY.H"          //KEY
 #include  "oled.h"			//OLED

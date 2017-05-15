@@ -21,9 +21,6 @@
 
 /*  Define--------------------------------------------------------------------*/
     #define SECTOR_NUM  (FLASH_SECTOR_NUM-1)              //尽量用最后面的扇区，确保安全
-    #define BELLPORT PTA9
-    #define BELLOFF  0
-    #define BELLON   1
    
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
@@ -48,6 +45,7 @@
     extern AD_V ad_1,ad_2,ad_3,ad_4;
     extern int16 OutData[4];
     extern uint16 time_sum;
+    
     
 void main()
 {

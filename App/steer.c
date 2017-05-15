@@ -19,6 +19,7 @@
     
 /*  Function declaration------------------------------------------------------*/
     uint16 abs_jdz(int X);
+    void bell_init(PTXn_e bell,uint8 state);
     
 /*  Declare-------------------------------------------------------------------*/
     extern int middle0,left_zhi,right_zhi;
@@ -70,22 +71,40 @@ void ser_ctrl(void)
         
     positionerror = position1[0]-position1[1];
     
-    str_inc = (int)(kpc*position1[0]+kdc_1*positionerror);
-    temp_speed=(int)( 1.5*(100-abs(str_inc)) );
-    if(abs(str_inc)>=70)
-        temp_speed=80;
+
     //str_inc= ((left0+left1)/2)-((right0+right1)/2);
     //if(left1>left0 && left1>right0 && left1>right1)
     //    str_inc = 520;
     //if(right1>right0 && right1>left0 && right1>left1)
     //    str_inc = 720;
+    
+    if( (abs(left1-60)<10)&&(abs(right1-60)<10) ) {
+        ser_pwm=560;
+        ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);
+        bell_init(BELLPORT,1);
+        dwt_delay_ms(150);
+        bell_init(BELLPORT,0);
+    }
+    if (abs(left0-right0)<10) {
+        kpc=0.6;
+        kdc_1=1;
+    }
+    else {
+        kpc=0.9;
+        kdc_1=1;
+    }
+    str_inc = (int)(kpc*position1[0]+kdc_1*positionerror);             
+    temp_speed=(int)( 1.7*(100-abs(str_inc)) );
+    if(abs(str_inc)>=70)
+        temp_speed=100; 
+    if((left1<2)&&(left0<2)&&(right1<2)&&(right0<2)) {
+        temp_speed=0;
+        str_inc=0;
+    }
     ser_pwm = 620+str_inc;
     if(ser_pwm>720) ser_pwm=720;
     if(ser_pwm<520) ser_pwm=520;
-    ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);
-    
-    
-    
+    ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);   
 //    for(int i=4;i>0;i--)
 //     position1[i]=position1[i-1]; 
 //    for(int i=4;i>0;i--) 
