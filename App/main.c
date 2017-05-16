@@ -46,7 +46,6 @@
     extern int16 OutData[4];
     extern uint16 time_sum;
     
-    
 void main()
 {
     uint16 time_sum_close;

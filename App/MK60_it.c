@@ -31,7 +31,8 @@
     extern uint32 span_main_cycle;
     extern void DirectionVoltageSigma(void);
     extern uint16  AD_conv[CONV_TIMES];
-
+    extern float position1[];
+  
 /*!
  *  @brief      UART4中断服务函数
  *  @since      v5.0

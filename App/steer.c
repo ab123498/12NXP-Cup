@@ -8,10 +8,10 @@
 /*  Variable------------------------------------------------------------------*/
     float ADflag1,ADflag2,AD_error1,AD_error2;
     uint16 sum_3;
-    uint16 kdc=40;
+    uint16 kdc=1;
     uint8 num;
     int steer_inc;
-    float position1[4],piancha[4],positiony,ADx1[5],psum,\
+    float position1[4],position2,piancha[4],positiony,ADx1[5],psum,\
         xianzhiflag,positionerror,d,e,f,kpc,kdc_1;
     int steer_PWM;
     uint8 zhijiao_flag;
@@ -56,24 +56,27 @@ void ser_ctrl(void)
 {    
     int16 str_inc;
     uint16 ser_pwm;
-    
     for(int i=4;i>0;i--)
         position1[i]=position1[i-1];
     AD_dif1=(left0+left1)-(right0+right1);
     AD_sum1=left0+right0+left1+right1;
     ADflag1 = (float)AD_dif1/(float)AD_sum1;
-    LCD_Show_Number(52,3  ,(uint16)ADflag1);
     position1[0] = (int)(ADflag1*(float)temp_serial); 
-    if(position1[0]<0)position1[0]=-position1[0];     
-    if(right0<left0)position1[0]=-position1[0];
-    if(fabs(position1[0])>100)position1[0]=100;         
-    if((abs(left1-60)<10)&&(abs(right1-60)<10)) {          //识别圆环
+    //LCD_Show_Number(0,3  ,abs_jdz((uint16)position1[0]));
+    if(position1[0]<0)  position1[0]=-position1[0];     
+    if(right0<left0)    position1[0]=-position1[0];
+    if(fabs(position1[0])>100)  position1[0]=100;  
+    
+    if((abs(left1-60)<5)&&(abs(right1-60)<5)) {          //识别圆环
         ser_pwm=560;
         ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);
         bell_init(BELLPORT,1);
         dwt_delay_ms(150);
         bell_init(BELLPORT,0);
     }
+    
+    if(left0<60&&right0<60) 
+        position1[0]=position1[0]/1.5;
 //    if (abs(left0-right0)<10&&abs(left1-right1)<10) {                                //简易动态P
 //        kpc=0.6;        
 //    }

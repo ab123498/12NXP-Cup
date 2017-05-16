@@ -7,5 +7,6 @@
 
 /*  Function declaration------------------------------------------------------*/
 extern void ser_ctrl(void);
+uint16 abs_jdz(int X);//设定绝对值
 
 #endif /*end of STEER*/

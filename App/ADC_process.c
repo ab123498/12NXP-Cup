@@ -135,7 +135,7 @@ void AD_data(void)
 
 void proc_AD_conv(void)
 {
-    static uint16 chain_num = 0,temp_max=3300;
+    static uint16 chain_num = 0,temp_max=10000;
     
     ad_1.AD[chain_num % CHAIN_NUM] = adc_ave(AMPleft0,ADC_12bit,3);
     ad_2.AD[chain_num % CHAIN_NUM] = adc_ave(AMPleft1,ADC_12bit,3);
