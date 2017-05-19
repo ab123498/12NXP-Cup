@@ -135,7 +135,7 @@ void AD_data(void)
 
 void proc_AD_conv(void)
 {
-    static uint16 chain_num = 0,temp_max=10000;
+    static uint16 chain_num = 0,temp_max=4095;
     
     ad_1.AD[chain_num % CHAIN_NUM] = adc_ave(AMPleft0,ADC_12bit,3);
     ad_2.AD[chain_num % CHAIN_NUM] = adc_ave(AMPleft1,ADC_12bit,3);
@@ -164,10 +164,10 @@ void proc_AD_conv(void)
   
         if(ad_4.max>temp_max)       ad_4.max=temp_max;
  
-        right1= ad_3.max/33;  //E23
-        right0= ad_4.max/33;  //E18
-        left0 = ad_2.max/33;  //E20
-        left1 = ad_1.max/33;  //E21
+        right0= ad_3.max/33;  //E23
+        left1= ad_2.max/33;  //E18
+        left0 = ad_1.max/33;  //E20
+        right1= ad_4.max/33;  //E21
         if(chain_num % 1000 ==0) {
             LCD_Show_Number(0, 1 ,ad_1.max);       //OLED显示 AD数据
             LCD_Show_Number(96, 1,ad_3.max);

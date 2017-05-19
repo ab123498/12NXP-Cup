@@ -8,12 +8,12 @@
     #define AMP5     ADC1_SE12    //PTB6
     #define AMP6     ADC1_SE13    //PTB7
 
-    #define AMPleft0 AMP4
-    #define AMPleft1 AMP6
+    #define AMPleft0 AMP2
+    #define AMPleft1 AMP1
     #define AMPleft2 AMP5
     #define AMPright0 AMP3
-    #define AMPright1 AMP1
-    #define AMPright2 AMP2
+    #define AMPright1 AMP4
+    #define AMPright2 AMP6
     #define CONV_TIMES 10
     #define CHAIN_NUM 2
     typedef struct 
