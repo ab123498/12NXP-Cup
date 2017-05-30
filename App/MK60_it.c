@@ -20,19 +20,15 @@
 #include "stdio.h"
 
 /*  Variable------------------------------------------------------------------*/
-	int16 encoder1;//编码器输出
-    Dtype user_flag;//用户标志结构
-    uint32 span_pit_cycle;//pit中断时间
-    int8 ch_buffer[81];//串口接收buffer
-    uint16 ser_temp=620;
-    uint16 time_sum=0;//秒级计时
+	int16 encoder1;         //编码器输出
+    Dtype user_flag;        //用户标志结构
+    uint32 span_pit_cycle;  //pit中断时间
+    int8 ch_buffer[81];     //串口接收buffer
+    uint16 time_sum=0;      //秒级计时
     
 /*  Declare-------------------------------------------------------------------*/
-    extern uint32 span_main_cycle;
-    extern void DirectionVoltageSigma(void);
-    extern uint16  AD_conv[CONV_TIMES];
-    extern float position1[];
   
+/*  Callback Function -------------------------------------------------------------*/    
 /*!
  *  @brief      UART4中断服务函数
  *  @since      v5.0
@@ -76,7 +72,7 @@ void PIT0_IRQHandler(void)
     //DirectionVoltageSigma(); 
     ser_ctrl();
     if(PIT0_Time_count%300==0) {
-        user_flag.b0 = 1;                                   //b0 用于大循环printf
+        user_flag.b0 = 1;                               //b0 用于大循环printf
         
     }
     if(PIT0_Time_count==1000) {

@@ -16,7 +16,7 @@
     extern uint16 temp_serial;
     extern uint32 temp_speed;
  
-           
+/*  Function -----------------------------------------------------------------*/           
 unsigned short CRC_CHECK(unsigned char *Buf, unsigned char CRC_CNT)
 {
     unsigned short CRC_Temp;
