@@ -51,7 +51,7 @@ void main()
 {
     uint16 time_sum_close;
 	led_all_init();
-    bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
+    bell_init(BELLPORT,BELLON);                          //输入为 0 不响
 	DisableInterrupts;
 	LCD_Init();
 	LCD_DLY_ms(50);

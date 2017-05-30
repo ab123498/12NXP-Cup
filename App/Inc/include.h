@@ -3,9 +3,9 @@
 
 #include  "common.h"
 
-    #define BELLPORT PTA9
-    #define BELLOFF  0
-    #define BELLON   1
+    #define BELLPORT PTE10
+    #define BELLOFF  1
+    #define BELLON   0
 /*
  * Include 用户自定义的头文件
  */
