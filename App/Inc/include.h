@@ -3,9 +3,13 @@
 
 #include  "common.h"
 
-    #define BELLPORT PTE10
+    #define BELLPORT PTA9
     #define BELLOFF  1
     #define BELLON   0
+
+    #define ADEEP   30
+    #define ADNUM   (ADEEP-1)
+    #define ADWIDE  10
 /*
  * Include 用户自定义的头文件
  */

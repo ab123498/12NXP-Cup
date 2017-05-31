@@ -5,8 +5,7 @@
 /*  Define--------------------------------------------------------------------*/
     
 /*  Variable------------------------------------------------------------------*/
-    AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
-    uint16 left0,left1,middle0,right1,right0;
+    AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;    
     
 /*  Function declaration------------------------------------------------------*/
     
@@ -34,11 +33,6 @@ void proc_AD_conv(void)
         if(ad_2.max>temp_max) ad_2.max=temp_max;        
         if(ad_3.max>temp_max) ad_3.max=temp_max;  
         if(ad_4.max>temp_max) ad_4.max=temp_max;
- 
-        right0= ad_3.max/33;  //E23
-        left1= ad_2.max/33;  //E18
-        left0 = ad_1.max/33;  //E20
-        right1= ad_4.max/33;  //E21
         
         if(chain_num % 1000 ==0) {           
             LCD_Show_Number(0, 1 ,ad_1.max);       //OLED显示 AD数据
