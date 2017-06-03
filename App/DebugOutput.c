@@ -77,12 +77,17 @@ void poll_printf(void)
 void uart_input_format(void)
 {
     if(user_flag.b1) {//接收到数据需要处理
-        if(strcmp(ch_buffer,"flash_test\n") == 0)
+        //char ch_cmd;
+        //chcmd=
+
+      
+        if(strcmp(ch_buffer,"set_speed\n") == 0) {
             user_flag.b2=1;
-        sscanf(strchr(ch_buffer, ' ')+1,"%ld",&temp_speed);//将空格后的数值存入变量
-		printf("%ld\n",temp_speed);
-        memset(ch_buffer,0,80);
-        user_flag.b1=0;
+            sscanf(strchr(ch_buffer, ' ')+1,"%ld",&temp_speed);//将空格后的数值存入变量
+            printf("%ld\n",temp_speed);
+            memset(ch_buffer,0,80);
+            user_flag.b1=0;
+        }
     }
 }
 

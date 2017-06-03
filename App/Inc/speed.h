@@ -7,5 +7,9 @@
 /*  Enum----------------------------------------------------------------------*/
 
 /*  Function declaration------------------------------------------------------*/
-
+float jueduizhif(float x);
+void set_speed(int speed) ;
+int Getspeed(int ideal,int now);
+void get_pulse(void);
+void speed_control(void);
 #endif /*end of header*/

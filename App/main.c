@@ -74,7 +74,7 @@ void main()
                                                           //port_cfg.h 里 配置 FTM0_CH3 对应为 PTA6
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
     ftm_pwm_init(MOTORFTM,MOTORFTM_A,10000, 0);
-    ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000, temp_speed);
+    ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000, 0);
     
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
@@ -85,7 +85,6 @@ void main()
             uart_input_format();
             push_data2flash();
             set_ftm_ser();
-            ftm_pwm_duty(MOTORFTM,MOTORFTM_A,temp_speed);
             if(time_sum != time_sum_close) {      
                 printf("%ds\n",time_sum);
                 time_sum_close = time_sum;

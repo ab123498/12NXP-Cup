@@ -29,6 +29,8 @@
     
 /*  Declare-------------------------------------------------------------------*/
     extern AD_V ad_1,ad_2,ad_3,ad_4;
+    extern uint8 speed_array[5];
+    extern int pwm;
     
 /*  Callback Function -------------------------------------------------------------*/    
 /*!
@@ -56,22 +58,24 @@ void uart5_handler(void)
  *brief: PIT0_IRQHandler
  *note:  PIT0中断服务函数
  */
-void PIT0_IRQHandler(void)
+void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num是记数组角标的
 {
     int16 val;
     static uint32 PIT0_Time_count;
     static uint32 AD_Array_count;
     static uint16 AD_Array_num;
+    static uint16 speed_array_count_num;
     uint8 ch[4];
     
     lptmr_timing_ms(65535);
+/*  speed input---------------------------------------------------------------*/    
     val = ftm_quad_get(FTM1);                           //获取FTM 正交解码 的脉冲数(负数表示反方向)
     ftm_quad_clean(FTM1);
-    if(val>=0)
-        encoder1=val;
-    else
-        encoder1=-val;
+    speed_array[speed_array_count_num] = -val;
+    pwm = Getspeed(20,-val);
+    set_speed(pwm);
     
+/*  senser input array--------------------------------------------------------*/    
     if( AD_Array_count % ADWIDE ) {
         right0[AD_Array_num]= ad_3.max/33;  //E23
         left1[AD_Array_num] = ad_2.max/33;  //E18
@@ -81,19 +85,28 @@ void PIT0_IRQHandler(void)
     }
     
     ser_ctrl();
-    if(PIT0_Time_count%300==0)
+    
+    if(PIT0_Time_count%300==0) {
         user_flag.b0 = 1;                               //b0 用于大循环printf
+        LCD_Show_Number(52,6,val);
+        LCD_Show_Number(52,5,val);
+    }
     if(PIT0_Time_count==1000) {
         PIT0_Time_count=0;
         if(time_sum == 999) time_sum=0;
         sprintf(ch,"%ds",time_sum++);
         LCD_P6x8Str(52,7,ch);
+        printf("%d\n",pwm);
+        printf("s %d\n",val);
     }
     
     if(AD_Array_count==1000) AD_Array_count=0;
     if(AD_Array_num==ADNUM) AD_Array_num=0;
+    if(speed_array_count_num==4) speed_array_count_num=0;
     PIT0_Time_count++;
     AD_Array_count++;
+    speed_array_count_num++;
+    
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
     PIT_Flag_Clear(PIT0);                               //清中断标志位
 }
