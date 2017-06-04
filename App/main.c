@@ -24,7 +24,6 @@
    
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
-    uint32 temp_speed;//临时开环速度
     
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);

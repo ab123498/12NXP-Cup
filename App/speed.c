@@ -13,28 +13,18 @@
     int et,et1,et2,pianyi_duty,angel_duty;
     float  Kp=12,Ki=0.9,Kd=3;
 
-float jueduizhif(float x) 
-{ 
-    x=x>=0?x:-x;
-    
-    return x; 
-} 
-
 void set_speed(int speed)//输出速度
 {
-    if(speed>=0)
-    {
+    if(speed>=0) {
         ftm_pwm_duty(MOTORFTM,MOTORFTM_B,speed);    //正转 占空比 1000代表百分百
         ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);        //反转
     }
-    else 
-    {
+    else {
         ftm_pwm_duty(FTM0,FTM_CH3,0);
         ftm_pwm_duty(FTM0,FTM_CH2,0);
     }
 #if 0
-    if(speed<0)
-    {
+    if(speed<0) {
         ftm_pwm_duty(FTM0,FTM_CH3,0);
         ftm_pwm_duty(FTM0,FTM_CH2,abs_jdz(speed));
     }

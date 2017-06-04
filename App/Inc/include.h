@@ -9,7 +9,7 @@
 
     #define ADEEP   30
     #define ADNUM   (ADEEP-1)
-    #define ADWIDE  10
+    #define ADWIDE  10     
 /*
  * Include 用户自定义的头文件
  */

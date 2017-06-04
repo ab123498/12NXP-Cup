@@ -25,12 +25,14 @@
     uint32 span_pit_cycle;  //pit中断时间
     int8 ch_buffer[81];     //串口接收buffer
     uint16 time_sum=0;      //秒级计时
-    uint16 right0[ADEEP],right1[ADEEP],left1[ADEEP],left0[ADEEP];
+    uint16 right1[ADEEP],right0[ADEEP],middle[ADEEP],left0[ADEEP],left1[ADEEP],\
+            right2[ADEEP];
     
 /*  Declare-------------------------------------------------------------------*/
-    extern AD_V ad_1,ad_2,ad_3,ad_4;
+    extern AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
     extern uint8 speed_array[5];
     extern int pwm;
+    extern int speed_ctl_output;
     
 /*  Callback Function -------------------------------------------------------------*/    
 /*!
@@ -72,15 +74,17 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     val = ftm_quad_get(FTM1);                           //获取FTM 正交解码 的脉冲数(负数表示反方向)
     ftm_quad_clean(FTM1);
     speed_array[speed_array_count_num] = -val;
-    pwm = Getspeed(20,-val);
+    pwm = Getspeed(speed_ctl_output,-val);//
     set_speed(pwm);
     
 /*  senser input array--------------------------------------------------------*/    
     if( AD_Array_count % ADWIDE ) {
-        right0[AD_Array_num]= ad_3.max/33;  //E23
-        left1[AD_Array_num] = ad_2.max/33;  //E18
-        left0[AD_Array_num] = ad_1.max/33;  //E20
-        right1[AD_Array_num]= ad_4.max/33;  //E21
+        right0[AD_Array_num]= ad_3.max/40;
+        left1[AD_Array_num] = ad_2.max/40;
+        left0[AD_Array_num] = ad_1.max/40;
+        right1[AD_Array_num]= ad_4.max/40;
+        middle[AD_Array_num]= ad_5.max/40;
+        right2[AD_Array_num]= ad_6.max/40;
         AD_Array_num++;
     }
     
@@ -96,8 +100,9 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         if(time_sum == 999) time_sum=0;
         sprintf(ch,"%ds",time_sum++);
         LCD_P6x8Str(52,7,ch);
-        printf("%d\n",pwm);
-        printf("s %d\n",val);
+        printf("pwm%d\n",pwm);
+        printf("!!!sj %d\n",-val);
+        printf("mb %d\n",speed_ctl_output);
     }
     
     if(AD_Array_count==1000) AD_Array_count=0;

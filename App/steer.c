@@ -3,8 +3,8 @@
     #include "include.h"
     #include "steer.h"
     #include <math.h>
-
 /*  Define--------------------------------------------------------------------*/
+    #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
     float ADflag1,ADflag2,AD_error1,AD_error2;
     uint16 sum_3;
@@ -13,25 +13,21 @@
     uint8 num;
     int steer_inc;
     float position1[4],position2,piancha[4],positiony,ADx1[5],psum,\
-        xianzhiflag,positionerror,d,e,f,kpc,kdc_1=50;
+        xianzhiflag,positionerror,d,e,f,kpc,kdc_1=40 ;
     int steer_PWM;
     uint8 zhijiao_flag;
     uint16 temp_serial=120;
     float d = 0.00013,e = 0.005,f = 0.8;
-    
+    int speed_ctl_output;
 /*  Function declaration------------------------------------------------------*/
-    uint16 abs_jdz(int X);
     void bell_init(PTXn_e bell,uint8 state);
-    
 /*  Declare-------------------------------------------------------------------*/
     extern int middle0,left_zhi,right_zhi;
     extern int steer_PWM;
     extern int AD_dif2,AD_sum2,AD_flag1,AD_flag2;
     extern uint8 zhijiao_flag;
-    extern uint16 right0[],right1[],left1[],left0[];
-    extern uint32 temp_speed;
+    extern uint16 right1[],right0[],middle[],left0[],left1[],right2[];
     static uint16 AD_Array_num;//AD循环队列的头部
-    
 /*  Function -----------------------------------------------------------------*/
 uint16 abs_jdz(int X)//设定绝对值
 {
@@ -40,28 +36,46 @@ uint16 abs_jdz(int X)//设定绝对值
     return X;
 }
 
+
+float jueduizhif(float x) 
+{ 
+    x=x>=0?x:-x;
+    
+    return x; 
+} 
+
 void ser_ctrl(void)
 {    
     int16 str_inc;
     uint16 ser_pwm;
     static uint16 real_ad_num;
-    static uint16 real_right0,real_right1,real_left1,real_left0;
+    static uint16 real_right1,real_right0,real_middle,real_left0,real_left1,
+                  real_right2;
     
     real_ad_num = (AD_Array_num + 20) % ADEEP;
-    real_right0=right0[real_ad_num];
-    real_right1=right1[real_ad_num];
-    real_left1 =left1[real_ad_num];
-    real_left0 =left0[real_ad_num];
-      
+    real_right0=right1[real_ad_num];
+    real_right1=right0[real_ad_num];
+    real_left1 =left0[real_ad_num];
+    real_left0 =left1[real_ad_num];
+    real_right2=right2[real_ad_num];
+    real_middle=middle[real_ad_num];
+    
+    if(1000<real_middle<2000 && 1000<real_right2<1700) {
+        real_right1 = real_right2;//用处置电感临时替代45度电感，以后改
+        bell_init(BELLPORT,BELLON);
+    }
+    else bell_init(BELLPORT,BELLOFF);
+
     for(int i=4;i>0;i--)
         position1[i]=position1[i-1];
     AD_dif1=(real_left0+real_left1)-(real_right0+real_right1);
     AD_sum1=real_left0+real_right0+real_left1+real_right1;
     ADflag1 = (float)AD_dif1/(float)AD_sum1;
-    position1[0] = (int)(ADflag1*(float)temp_serial); 
+    position1[0] = -(int)(ADflag1*(float)temp_serial); 
+    
     //LCD_Show_Number(0,3  ,abs_jdz((uint16)position1[0]));
-    if(position1[0]<0)  position1[0]=-position1[0];     
-    if(real_right0<real_left0)    position1[0]=-position1[0];
+    //if(position1[0]<0)  position1[0]=-position1[0];     
+    //if(real_right0<real_left0)    position1[0]=-position1[0];
     //if(fabs(position1[0])>100)  position1[0]=100;  
     
     /*    if((abs(real_left1-60)<5)&&(abs(real_right1-60)<5)) {          //识别圆环
@@ -84,23 +98,23 @@ void ser_ctrl(void)
      *    }
      */
     
-    //kpc=d*position1[0]*position1[0]-e*jueduizhif(position1[0])+f;//很明显加这个动态p会乱抖
+    kpc=d*position1[0]*position1[0]-e*jueduizhif(position1[0])+f;//很明显加这个动态p会乱抖
     
-    kpc=0.6; 
+    //kpc=0.6; 
     
     positionerror = position1[0]-position1[1]; 
     
     str_inc = (int)(kpc*position1[0]+kdc_1*positionerror);   
     
-    //temp_speed=200;
-    temp_speed=(int)( 1.2*(100-abs(str_inc)) );
-    
-    if(abs(str_inc)>=70)
-        temp_speed=120; 
-    if((real_left1<2)&&(real_left0<2)&&(real_right1<2)&&(real_right0<2)) {
-        temp_speed=0;
+/*  速度控制部分----------------------------------------------------------BEG*/
+    //speed_ctl_output=(int)( 0.1*(100-abs(str_inc)) );
+    //if(abs(str_inc)>=70)
+    //    speed_ctl_output=MAXSPEED; 
+    if((real_left1==0)&&(real_left0==0)&&(real_right1==0)&&(real_right0==0)) {
+        speed_ctl_output=0;
         str_inc=0;
     }
+/*  速度控制部分----------------------------------------------------------END*/
     
     ser_pwm = 620+str_inc;
     
