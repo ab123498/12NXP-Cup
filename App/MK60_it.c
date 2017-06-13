@@ -33,6 +33,7 @@
     extern uint8 speed_array[5];
     extern int pwm;
     extern int speed_ctl_output;
+    extern float position1[],position2[];;
     
 /*  Callback Function -------------------------------------------------------------*/    
 /*!
@@ -85,24 +86,25 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         right1[AD_Array_num]= ad_4.max/40;
         middle[AD_Array_num]= ad_5.max/40;
         right2[AD_Array_num]= ad_6.max/40;
+        ser_ctrl();
+        for(int i=4;i>0;i--) {
+            position1[i]=position1[i-1];//差和比误差的dt
+            position2[i]=position2[i-1];
+        }
         AD_Array_num++;
     }
     
-    ser_ctrl();
-    
     if(PIT0_Time_count%300==0) {
         user_flag.b0 = 1;                               //b0 用于大循环printf
-        LCD_Show_Number(52,6,val);
-        LCD_Show_Number(52,5,val);
     }
     if(PIT0_Time_count==1000) {
         PIT0_Time_count=0;
         if(time_sum == 999) time_sum=0;
         sprintf(ch,"%ds",time_sum++);
         LCD_P6x8Str(52,7,ch);
-        printf("pwm%d\n",pwm);
-        printf("!!!sj %d\n",-val);
-        printf("mb %d\n",speed_ctl_output);
+        //printf("pwm%d\n",pwm);
+        //printf("!!!sj %d\n",-val);
+        //printf("mb %d\n",speed_ctl_output);
     }
     
     if(AD_Array_count==1000) AD_Array_count=0;

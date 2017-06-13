@@ -27,6 +27,7 @@
     
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
+    void bell_set(PTXn_e bell,uint8 data);
 	void encoder_init(void);
     void write_flash_data(Dtype flash_area_write , uint16 offset);
     Dtype read_flash_data(uint16 offset);
@@ -50,7 +51,7 @@ void main()
 {
     uint16 time_sum_close;
 	led_all_init();
-    bell_init(BELLPORT,BELLON);                          //输入为 0 不响
+    bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
 	DisableInterrupts;
 	LCD_Init();
 	LCD_DLY_ms(50);
@@ -125,6 +126,11 @@ void adc_conv_init( void )
 void bell_init(PTXn_e bell,uint8 state)
 {
 	gpio_init(bell,GPO,state);
+}
+
+void bell_set(PTXn_e bell,uint8 data)
+{
+    gpio_set   (bell,data);
 }
 
 void encoder_init(void)

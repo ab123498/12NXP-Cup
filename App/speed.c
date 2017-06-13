@@ -42,7 +42,8 @@ void get_pulse(void)//输入速度,编码器获得速度
 int Getspeed(int ideal,int now)//处理速度PID,输入now为电机目前速度djsd，ideal为设置目标速度
 { 
     if(now<ideal) pid_speed++;
-    else pid_speed--;
+    else if(now>ideal) pid_speed--;
+    else ;
     if(pid_speed>200) pid_speed=200;
     if(pid_speed<0) pid_speed=0;
     return pid_speed;
