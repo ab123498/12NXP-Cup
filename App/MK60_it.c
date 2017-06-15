@@ -33,7 +33,7 @@
     extern uint8 speed_array[5];
     extern int pwm;
     extern int speed_ctl_output;
-    extern float position1[],position2[];;
+    extern float position1[],position2[];
     
 /*  Callback Function -------------------------------------------------------------*/    
 /*!
@@ -93,6 +93,8 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         }
         AD_Array_num++;
     }
+    
+    if(PIT0_Time_count%25==0) user_flag.b4=1;
     
     if(PIT0_Time_count%300==0) {
         user_flag.b0 = 1;                               //b0 用于大循环printf

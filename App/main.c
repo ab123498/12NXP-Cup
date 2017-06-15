@@ -45,11 +45,14 @@
     extern AD_V ad_1,ad_2,ad_3,ad_4;
     extern int16 OutData[4];
     extern uint16 time_sum;
+    extern float position1[],position2[];
 
 /*  Run Function -------------------------------------------------------------*/    
 void main()
 {
     uint16 time_sum_close;
+    float  OutData[2];
+   
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
 	DisableInterrupts;
@@ -91,7 +94,12 @@ void main()
             }
 			//printf("%f",test);
         }
-        
+        if(user_flag.b4) {
+            OutData[0] = position1[0];
+            OutData[1] = position2[0];
+            vcan_sendware(OutData,sizeof(OutData));
+            user_flag.b4=0;
+        }
         span_main_cycle = lptmr_time_get_ms();
         //vscope_test();
 	}

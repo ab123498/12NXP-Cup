@@ -14,7 +14,7 @@
     int steer_inc;
     float position1[4],position2[4],positionerror,d,e,f,kpc,kdc_1=4 ;
     int steer_PWM;
-    uint16 temp_serial=86;//差和比系数
+    uint16 temp_serial=110;//差和比系数
     float d = 0.00013,e = 0,f = 0;
     int speed_ctl_output;
 /*  Function declaration------------------------------------------------------*/
@@ -74,8 +74,12 @@ void ser_ctrl(void)
     //}
     //else bell_set(BELLPORT,BELLOFF);
     
-    AD_dif1=(real_left0+real_left1)-(real_right0+real_right1);//左减右
-    AD_sum1=real_left0+real_right0+real_left1+real_right1;
+    AD_dif1=(real_left0 +real_left1/2 +left0[(AD_Array_num + 98) % ADEEP])-\
+            (real_right0+real_right1/2+right0[(AD_Array_num + 98) % ADEEP]);//左减右
+    AD_sum1=real_left0+real_right0+\
+        (real_left1+real_right1+\
+         left0[(AD_Array_num + 98) % ADEEP]+\
+         right0[(AD_Array_num + 98) % ADEEP])/2;
     ADflag1 = (float)AD_dif1/(float)AD_sum1;
     position1[0] = (int)(ADflag1*(float)temp_serial); 
     //if(right1>left1)                      
