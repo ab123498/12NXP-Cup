@@ -60,7 +60,7 @@ void ser_ctrl(void)
     //else 
     //    position2[0]=position2[3];
     
-    real_ad_num = (AD_Array_num + 95) % ADEEP;
+    real_ad_num = (AD_Array_num + 5) % ADEEP;
     real_right0=right0[real_ad_num];
     real_right1=right1[real_ad_num];
     real_left1 =left1[real_ad_num];

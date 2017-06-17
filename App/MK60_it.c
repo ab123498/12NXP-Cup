@@ -107,7 +107,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         //printf("mb %d\n",speed_ctl_output);
     }
     
-    if(AD_Array_count==1000) AD_Array_count=0;
+    if(AD_Array_count==10000) AD_Array_count=0;
     if(AD_Array_num==ADNUM) AD_Array_num=0;
     if(speed_array_count_num==4) speed_array_count_num=0;
     PIT0_Time_count++;
