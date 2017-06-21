@@ -6,11 +6,11 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.00013,e = 0,f = 0,\
-          position[ADEEP],positionerror,kpc,kdc_1=4 ;
+    float d = 0.00012,e = 0,f = 0.1,\
+          position[ADEEP],positionerror,kpc,kdc_1=10 ;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num;
-    uint16 kdc=1,steer_plus=86;//差和比系数
+    uint16 kdc=1,steer_plus=90;//差和比系数
 /*  Function declaration------------------------------------------------------*/
     void bell_set(PTXn_e bell,uint8 data);
 /*  Declare-------------------------------------------------------------------*/
@@ -20,29 +20,37 @@
 /*  Function -----------------------------------------------------------------*/
     void position_measure(void);
 
+uint16 abs_jdz(int X)//设定绝对值
+{
+    X=X>=0?X:-X; 
+    return X;
+}
+ 
 void ser_ctrl(void)
 {    
     int16 str_inc;//最后舵机中值
     
     static uint16 ser_pwm;
         
-    float Outdata[2];
+    float Outdata[2],real_position;
     
-    uint16 temp;
+    uint16 temp=0;
     
-    real_position_num = (position_num+5) % ADEEP;
+    real_position_num = (position_num+ADEEP-ADELAY) % ADEEP;
 
     position_measure();
+    
+    real_position = position[real_position_num];
 
-    kpc=d*sqrtf(position[real_position_num])\
-        -e*fabsf(position[real_position_num])+f;//很明显加这个动态p会乱抖
+    kpc=d*real_position*real_position\
+        +f;//很明显加这个动态p会乱抖
     
-    positionerror = position[real_position_num]\
-        -position[(real_position_num + 1) % ADEEP];
+    positionerror = real_position\
+        -position[(real_position_num - 1) % ADEEP];
     
-    str_inc = (int)(kpc*position[real_position_num]+kdc_1*positionerror);
+    str_inc = (int)(kpc*real_position+kdc_1*positionerror);
     
-    if(position_num<ADEEP&&temp%6==0) {
+    if(position_num<ADEEP&&temp%6==0&&user_flag.b5) {
         Outdata[0] = position[position_num];
         Outdata[1] = position[real_position_num];
         

@@ -94,7 +94,7 @@ void uart_input_format(void)
             sscanf(strchr(ch_buffer, ' ')+1,"%d",&mask.DW);//将空格后的数值存入变量
             printf("%d\n",mask.DW);
             memset(ch_buffer,0,80);
-            user_flag.b4=mask.b4;
+            user_flag.b5=mask.b31;
             user_flag.b1=0;
         }
     }
