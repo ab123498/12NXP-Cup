@@ -43,13 +43,17 @@
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern uint32 span_pit_cycle;                         //定义在MK60_it源文件
     extern AD_V ad_1,ad_2,ad_3,ad_4;
-    extern int16 OutData[4];
     extern uint16 time_sum;
+    extern float position[];
+    extern uint16 position_num;//差和比循环队列的头部
+    extern uint16 real_position_num;
 
 /*  Run Function -------------------------------------------------------------*/    
 void main()
 {
     uint16 time_sum_close;
+
+    
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
 	DisableInterrupts;
@@ -90,6 +94,9 @@ void main()
                 time_sum_close = time_sum;
             }
 			//printf("%f",test);
+            if(user_flag.b4) {
+                
+            }
         }
         
         span_main_cycle = lptmr_time_get_ms();
@@ -101,17 +108,6 @@ void NVIC_Config( void )
 {
     NVIC_SetPriorityGrouping(0xC0);                        //2位优先级
 }
-
-void vscope_test( void ) 
-{
-  //Read_ADC(10);
-  OutData[0] = ad_1.max;
-  OutData[1] = ad_2.max;
-  OutData[2] = ad_3.max;
-  OutData[3] = ad_4.max;
-  OutPut_Data(OutData);
-}
-
 
 void adc_conv_init( void ) 
 {
@@ -130,7 +126,7 @@ void bell_init(PTXn_e bell,uint8 state)
 
 void bell_set(PTXn_e bell,uint8 data)
 {
-    gpio_set   (bell,data);
+    gpio_set(bell,data);
 }
 
 void encoder_init(void)

@@ -13,7 +13,7 @@
 /*  Declare-------------------------------------------------------------------*/
     extern Dtype user_flag;                               //定义在MK60_it源文件
     extern int8 ch_buffer[];                              //串口接收缓冲区
-    extern uint16 temp_serial;
+    extern uint16 steer_plus;
     extern int speed_ctl_output;
  
 /*  Function -----------------------------------------------------------------*/           
@@ -89,6 +89,14 @@ void uart_input_format(void)
         //    memset(ch_buffer,0,80);
         //    user_flag.b1=0;
         //}
+        if(ch_buffer[0] == 't') {//strcmp(ch_buffer,"set_speed\n") == 0
+            Dtype mask;
+            sscanf(strchr(ch_buffer, ' ')+1,"%d",&mask.DW);//将空格后的数值存入变量
+            printf("%d\n",mask.DW);
+            memset(ch_buffer,0,80);
+            user_flag.b4=mask.b4;
+            user_flag.b1=0;
+        }
     }
 }
 

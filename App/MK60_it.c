@@ -20,20 +20,20 @@
 #include "stdio.h"
 
 /*  Variable------------------------------------------------------------------*/
-	int16 encoder1;         //编码器输出
-    Dtype user_flag;        //用户标志结构
-    uint32 span_pit_cycle;  //pit中断时间
-    int8 ch_buffer[81];     //串口接收buffer
-    uint16 time_sum=0;      //秒级计时
-    uint16 right1[ADEEP],right0[ADEEP],middle[ADEEP],left0[ADEEP],left1[ADEEP],\
-            right2[ADEEP];
+	Dtype  user_flag;        //用户标志结构
+    uint32 span_pit_cycle;   //pit中断时间
+    uint32 time_sum=0;       //秒级计时
+    int16  encoder1;         //编码器输出
+    uint16 right1,right0,middle,left0,left1,right2;
+    uint16 position_num=0;
+    int8   ch_buffer[81];    //串口接收buffer
     
 /*  Declare-------------------------------------------------------------------*/
     extern AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
-    extern uint8 speed_array[5];
+    extern float position[];
     extern int pwm;
     extern int speed_ctl_output;
-    extern float position1[],position2[];;
+    extern uint8 speed_array[5];
     
 /*  Callback Function -------------------------------------------------------------*/    
 /*!
@@ -65,8 +65,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
 {
     int16 val;
     static uint32 PIT0_Time_count;
-    static uint32 AD_Array_count;
-    static uint16 AD_Array_num;
+    static uint32 position_count;
     static uint16 speed_array_count_num;
     uint8 ch[4];
     
@@ -79,19 +78,20 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     set_speed(pwm);
     
 /*  senser input array--------------------------------------------------------*/    
-    if( AD_Array_count % ADWIDE ) {
-        right0[AD_Array_num]= ad_3.max/40;
-        left1[AD_Array_num] = ad_2.max/40;
-        left0[AD_Array_num] = ad_1.max/40;
-        right1[AD_Array_num]= ad_4.max/40;
-        middle[AD_Array_num]= ad_5.max/40;
-        right2[AD_Array_num]= ad_6.max/40;
+    if( position_count % ADWIDE ) {
+        right0= ad_3.max/40;
+        left1 = ad_2.max/40;
+        left0 = ad_1.max/40;
+        right1= ad_4.max/40;
+        middle= ad_5.max/40;
+        right2= ad_6.max/40;
+        position_num%=ADEEP;
         ser_ctrl();
-        for(int i=4;i>0;i--) {
-            position1[i]=position1[i-1];//差和比误差的dt
-            position2[i]=position2[i-1];
-        }
-        AD_Array_num++;
+        position_num++;
+    }
+    
+    if(PIT0_Time_count%20==0) {
+        user_flag.b4 = 1;
     }
     
     if(PIT0_Time_count%300==0) {
@@ -107,11 +107,10 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         //printf("mb %d\n",speed_ctl_output);
     }
     
-    if(AD_Array_count==10000) AD_Array_count=0;
-    if(AD_Array_num==ADNUM) AD_Array_num=0;
+    if(position_count==10000) position_count=0;
     if(speed_array_count_num==4) speed_array_count_num=0;
     PIT0_Time_count++;
-    AD_Array_count++;
+    position_count++;
     speed_array_count_num++;
     
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期

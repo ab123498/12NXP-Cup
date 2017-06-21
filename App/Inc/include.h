@@ -4,12 +4,12 @@
 #include  "common.h"
 
     #define BELLPORT PTA9
-    #define BELLON  1
-    #define BELLOFF   0
+    #define BELLON  0
+    #define BELLOFF   1
 
-    #define ADEEP   100
+    #define ADEEP   100//队列的存储深度
     #define ADNUM   (ADEEP-1)
-    #define ADWIDE  5     
+    #define ADWIDE  10  //几毫秒出一次ad及差和比   
 /*
  * Include 用户自定义的头文件
  */
