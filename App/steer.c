@@ -6,11 +6,11 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.00012,e = 0,f = 0.1,\
+    float d = 0.00009,e = 0,f = 0.4,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num;
-    uint16 kdc=1,steer_plus=90;//差和比系数
+    uint16 kdc=1,steer_plus=86;//差和比系数
 /*  Function declaration------------------------------------------------------*/
     void bell_set(PTXn_e bell,uint8 data);
 /*  Declare-------------------------------------------------------------------*/
@@ -41,7 +41,7 @@ void ser_ctrl(void)
     position_measure();
     
     real_position = position[real_position_num];
-
+    
     kpc=d*real_position*real_position\
         +f;//很明显加这个动态p会乱抖
     
@@ -62,7 +62,7 @@ void ser_ctrl(void)
 /*  速度控制部分----------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
         speed_ctl_output=0;
-        str_inc=0;
+        //str_inc=0;
     }
 /*  速度控制部分----------------------------------------------------------END*/
     
@@ -84,4 +84,7 @@ void position_measure(void)
     AD_sum=left0+right0+left1+right1;
     ADflag = (float)AD_dif/(float)AD_sum;
     position[position_num] = (int)(ADflag*(float)steer_plus);
+    if(position[position_num] > (steer_plus-5) || \
+       position[position_num] < (-steer_plus+5) )  
+       position[position_num]= position[(position_num + ADEEP - 1) % ADEEP];
 }
