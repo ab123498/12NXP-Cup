@@ -12,4 +12,5 @@ void set_speed(int speed) ;
 int Getspeed(int ideal,int now);
 void get_pulse(void);
 void speed_control(void);
+void stop(void);
 #endif /*end of header*/

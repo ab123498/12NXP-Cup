@@ -113,6 +113,9 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     position_count++;
     speed_array_count_num++;
     
+    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) {printf("6666666"); stop();}
+    //if(gpio_get(PTD4) || gpio_get(PTD6)) printf("6666666");
+    
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
     PIT_Flag_Clear(PIT0);                               //清中断标志位
 }

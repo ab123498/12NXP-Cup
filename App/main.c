@@ -37,6 +37,7 @@
     void cut_AD_pause_init(void);
     void vscope_test( void );
     void NVIC_Config( void );
+    void stop_init_im(void);
 
 /*  Declare-------------------------------------------------------------------*/
 	extern uint16 encoder1;                               //定义在MK60_it源文件
@@ -56,6 +57,7 @@ void main()
     
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
+    stop_init_im();
 	DisableInterrupts;
 	LCD_Init();
 	LCD_DLY_ms(50);
@@ -117,6 +119,12 @@ void adc_conv_init( void )
     adc_init(AMP4);
     adc_init(AMP5);
     adc_init(AMP6);
+}
+
+void stop_init_im(void)
+{
+    gpio_init(PTD4,GPI,0);
+    gpio_init(PTD6,GPI,0);
 }
 
 void bell_init(PTXn_e bell,uint8 state)

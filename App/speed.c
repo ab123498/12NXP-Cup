@@ -16,12 +16,12 @@
 void set_speed(int speed)//输出速度
 {
     if(speed>=0) {
-        ftm_pwm_duty(MOTORFTM,MOTORFTM_B,speed);    //正转 占空比 1000代表百分百
         ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);        //反转
+        ftm_pwm_duty(MOTORFTM,MOTORFTM_B,speed);    //正转 占空比 1000代表百分百
     }
     else {
-        ftm_pwm_duty(FTM0,FTM_CH3,0);
-        ftm_pwm_duty(FTM0,FTM_CH2,0);
+        ftm_pwm_duty(MOTORFTM,MOTORFTM_B,0);
+        ftm_pwm_duty(MOTORFTM,MOTORFTM_A,-speed);
     }
 #if 0
     if(speed<0) {
@@ -41,10 +41,30 @@ void get_pulse(void)//输入速度,编码器获得速度
 
 int Getspeed(int ideal,int now)//处理速度PID,输入now为电机目前速度djsd，ideal为设置目标速度
 { 
-    if(now<ideal) pid_speed++;
-    else if(now>ideal) pid_speed--;
-    else ;
+    static int16 et,et1=0,et2=0;
+    static float  Kp=12,Ki=0.9,Kd=1;
+    
+    et=ideal-now;
+    if(et<-50) et=-50;    
+    else if(et>50) et=50;
+       
+    pid_speed=pid_speed+(int)(Ki*et+Kp*(et-et1)+Kd*(et-2*et1+et2));
+    et2=et1;
+    et1=et;
+
     if(pid_speed>200) pid_speed=200;
-    if(pid_speed<0) pid_speed=0;
+    if(pid_speed<-200) pid_speed=-200;
+    if(pid_speed<50 && pid_speed>-50) pid_speed = 0;
     return pid_speed;
+}
+
+void stop(void)
+{
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_B,0);
+    DELAY_MS(10);
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_B,0);
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_A,40);
+    DELAY();
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);
 }

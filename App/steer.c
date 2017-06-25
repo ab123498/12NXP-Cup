@@ -86,5 +86,5 @@ void position_measure(void)
     position[position_num] = (int)(ADflag*(float)steer_plus);
     if(position[position_num] > (steer_plus-5) || \
        position[position_num] < (-steer_plus+5) )  
-       position[position_num]= position[(position_num + ADEEP - 1) % ADEEP];
+       position[position_num]= position[(position_num + ADEEP - 1) % ADEEP];//防止丢线阿
 }
