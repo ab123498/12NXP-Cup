@@ -27,7 +27,6 @@ typedef enum
 #ifdef MK60F15
     FTM3,
 #endif
-
     FTM_MAX,
 } FTMn_e;
 

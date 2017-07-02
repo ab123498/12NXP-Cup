@@ -23,8 +23,9 @@
 	Dtype  user_flag;        //用户标志结构
     uint32 span_pit_cycle;   //pit中断时间
     uint32 time_sum=0;       //秒级计时
+    uint32 PIT0_Time_count;
     int16  encoder1;         //编码器输出
-    uint16 right1,right0,middle,left0,left1,right2;
+    uint16 right1,right0,middle,left0,left1,right2,left2;
     uint16 position_num=0;
     int8   ch_buffer[81];    //串口接收buffer
     
@@ -64,7 +65,6 @@ void uart5_handler(void)
 void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num是记数组角标的
 {
     int16 val;
-    static uint32 PIT0_Time_count;
     static uint32 position_count;
     static uint16 speed_array_count_num;
     uint8 ch[4];
@@ -83,11 +83,14 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         left1 = ad_2.max/40;
         left0 = ad_1.max/40;
         right1= ad_4.max/40;
-        middle= ad_5.max/40;
-        right2= ad_6.max/40;
+        left2= ad_5.max/40;
+        middle= ad_6.max/40;
         position_num%=ADEEP;
         ser_ctrl();
         position_num++;
+    }
+    if(PIT0_Time_count%20==0) {
+        key_IRQHandler();
     }
     
     if(PIT0_Time_count%20==0) {
@@ -113,8 +116,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     position_count++;
     speed_array_count_num++;
     
-    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) {printf("6666666"); stop();}
-    //if(gpio_get(PTD4) || gpio_get(PTD6)) printf("6666666");
+    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) user_flag.b8=1;
     
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
     PIT_Flag_Clear(PIT0);                               //清中断标志位

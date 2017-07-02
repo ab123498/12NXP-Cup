@@ -52,9 +52,9 @@ int Getspeed(int ideal,int now)//´¦ÀíËÙ¶ÈPID,ÊäÈënowÎªµç»úÄ¿Ç°ËÙ¶Èdjsd£¬idealÎªÉ
     et2=et1;
     et1=et;
 
-    if(pid_speed>200) pid_speed=200;
-    if(pid_speed<-200) pid_speed=-200;
-    if(pid_speed<50 && pid_speed>-50) pid_speed = 0;
+    if(pid_speed>SPEEDEDGE) pid_speed=SPEEDEDGE;
+    if(pid_speed<-SPEEDEDGE) pid_speed=-SPEEDEDGE;
+    //if(pid_speed<50 && pid_speed>-50) pid_speed = 0;
     return pid_speed;
 }
 

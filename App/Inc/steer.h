@@ -3,6 +3,9 @@
 /*  Define--------------------------------------------------------------------*/
 #define STEERFTM        FTM0
 #define STEERFTM_CH     FTM_CH1
+#define STEERMID        620
+#define STEERH          720
+#define STEERL          520
 /*  Enum----------------------------------------------------------------------*/
 
 /*  Function declaration------------------------------------------------------*/

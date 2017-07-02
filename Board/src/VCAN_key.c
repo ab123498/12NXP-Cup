@@ -27,7 +27,7 @@
 /*
  * 定义 KEY 编号对应的管脚
  */
-PTXn_e KEY_PTxn[KEY_MAX] = {PTC6, PTC7, PTC8, PTC9, PTB20, PTB21, PTB22, PTB23};
+PTXn_e KEY_PTxn[KEY_MAX] = {PTC9, PTC8, PTC7, PTC6, PTB19, PTB18, PTB17, PTB16};
 
 
 /*!

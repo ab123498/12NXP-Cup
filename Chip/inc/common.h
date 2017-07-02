@@ -56,9 +56,9 @@ typedef union
         uint32 b3: 1;//舵机数据输入标志
         uint32 b4: 1;//波形输出消息
         uint32 b5: 1;//波形显示允许
-        uint32 b6: 1;
-        uint32 b7: 1;
-        uint32 b8: 1;
+        uint32 b6: 1;//入环标志
+        uint32 b7: 1;//丢线
+        uint32 b8: 1;//停车
         uint32 b9: 1;
         uint32 b10: 1;
         uint32 b11: 1;

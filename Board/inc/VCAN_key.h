@@ -29,17 +29,14 @@
 //按键端口的枚举
 typedef enum
 {
-    KEY_U,  //上
-    KEY_D,  //下
-
-    KEY_L,  //左
-    KEY_R,  //右
-
-    KEY_A,  //取消
-    KEY_B,  //选择
-
-    KEY_START,  //开始
-    KEY_STOP,   //停止
+    KEY0,  //拨码0
+    KEY1,  //拨码1         
+    KEY2,  //拨码2
+    KEY3,  //拨码3
+    KEY4,  //切换选择
+    KEY5,  //加
+    KEY6,  //减
+    KEY7,  //开始
 
     KEY_MAX,
 } KEY_e;

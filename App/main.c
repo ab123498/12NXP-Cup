@@ -21,10 +21,9 @@
 
 /*  Define--------------------------------------------------------------------*/
     #define SECTOR_NUM  (FLASH_SECTOR_NUM-1)              //尽量用最后面的扇区，确保安全
-   
+    
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
-    
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
     void bell_set(PTXn_e bell,uint8 data);
@@ -48,13 +47,15 @@
     extern float position[];
     extern uint16 position_num;//差和比循环队列的头部
     extern uint16 real_position_num;
+    extern int speed_ctl_output;
 
 /*  Run Function -------------------------------------------------------------*/    
 void main()
 {
     uint16 time_sum_close;
-
-    
+    KEY_MSG_t keymsg;
+    char ch[10];  
+       
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
     stop_init_im();
@@ -66,6 +67,7 @@ void main()
     flash_erase_sector(SECTOR_NUM);                     //擦除扇区
                                                         //写入flash数据前，需要先擦除对应的扇区(不然数据会乱)
     adc_conv_init();
+    key_init(KEY_MAX);
     EnableInterrupts;
     NVIC_Config();
     encoder_init();
@@ -81,11 +83,47 @@ void main()
                                                           //舵机初始化，频率50~300,改动后中值需要另调，482为初始化中值  525
     ftm_pwm_init(MOTORFTM,MOTORFTM_A,10000, 0);
     ftm_pwm_init(MOTORFTM,MOTORFTM_B,10000, 0);
-    
+        
 	while(1) {  
         lptmr_timing_ms(60000);                           //以lptmr测量大循环周期   
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
         proc_AD_conv();
+        if(get_key_msg(&keymsg)) {
+            printf("\nKEY%d,type%d",keymsg.key,keymsg.status);
+            
+            switch(keymsg.key) {
+                case KEY0: //拨码0
+                    break;
+                case KEY1: 
+                    ;
+                    break;//拨码1 
+                case KEY2: 
+                    ;
+                    break;//拨码2
+                case KEY3: 
+                    ;
+                    break;//拨码3
+                case KEY4: 
+                    ;
+                    break;//切换选
+                case KEY5: 
+                    if(keymsg.status) {
+                        if(!speed_ctl_output) speed_ctl_output=8;
+                        speed_ctl_output++;
+                    }
+                    break;//加
+                case KEY6: 
+                    if(keymsg.status) speed_ctl_output--;
+                    break;//减
+                case KEY7: 
+                    ;
+                    break;//开始
+            }
+            if(speed_ctl_output>25) speed_ctl_output=25;
+            else if(speed_ctl_output<0) speed_ctl_output=0;
+            sprintf(ch,"speed %d",speed_ctl_output);
+            LCD_P6x8Str(39,6,ch);
+        }
         if(user_flag.DW != 0) {
             poll_printf();
             uart_input_format();
@@ -98,6 +136,18 @@ void main()
 			//printf("%f",test);
             if(user_flag.b4) {
                 
+            }
+            if(user_flag.b6) {
+                printf("666");
+                user_flag.b6 = 0;
+            }
+            if(user_flag.b7) {
+                printf("777");
+                user_flag.b7 = 0;
+            }
+            if(user_flag.b8) {
+                printf("888");
+                user_flag.b8 = 0;
             }
         }
         

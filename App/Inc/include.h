@@ -10,7 +10,7 @@
     #define ADEEP   100//队列的存储深度
     #define ADNUM   (ADEEP-1)
     #define ADWIDE  3  //几毫秒出一次ad及差和比 
-    #define ADELAY 5
+    #define ADELAY 0
 /*
  * Include 用户自定义的头文件
  */

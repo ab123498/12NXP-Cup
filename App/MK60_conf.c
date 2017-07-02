@@ -68,9 +68,9 @@ void start_check()
 {
     uint8 flag = 0;
 
-    key_init(KEY_A);
+    key_init(KEY4);
 
-    if(key_check(KEY_A) == KEY_DOWN )
+    if(key_check(KEY4) == KEY_DOWN )
     {
         //按键按下
 
@@ -79,7 +79,7 @@ void start_check()
         while(1)
         {
 
-            if(key_check(KEY_A) == KEY_UP)
+            if(key_check(KEY4) == KEY_UP)
             {
                 flag = 1;
             }
@@ -89,15 +89,15 @@ void start_check()
             DELAY_MS(500);                          //此处的延时，可起到 按键 消抖的功能
 
             //如果 送开按键后，再按下 按键，则 进行解锁 操作
-            if((flag == 1)  && (key_check(KEY_A) == KEY_DOWN ))
+            if((flag == 1)  && (key_check(KEY4) == KEY_DOWN ))
             {
-                while(key_check(KEY_A) == KEY_DOWN)         //等待按键 弹起
+                while(key_check(KEY4) == KEY_DOWN)         //等待按键 弹起
                 {
                     led_turn(LED0);
                     DELAY_MS(100);                          //此处的延时，可起到 按键 消抖的功能
                 }
 
-                while(key_check(KEY_A) == KEY_UP)         //等待按键 弹起后 再 进行解锁
+                while(key_check(KEY4) == KEY_UP)         //等待按键 弹起后 再 进行解锁
                 {
                     led_turn(LED0);
                     DELAY_MS(50);                          //此处的延时，可起到 按键 消抖的功能
