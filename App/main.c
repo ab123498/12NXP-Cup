@@ -48,6 +48,7 @@
     extern uint16 position_num;//差和比循环队列的头部
     extern uint16 real_position_num;
     extern int speed_ctl_output;
+    extern int speed_ctl_output_close;
 
 /*  Run Function -------------------------------------------------------------*/    
 void main()
@@ -92,8 +93,9 @@ void main()
             printf("\nKEY%d,type%d",keymsg.key,keymsg.status);
             
             switch(keymsg.key) {
-                case KEY0: //拨码0
-                    break;
+                case KEY0: 
+                    ;
+                    break;//拨码0
                 case KEY1: 
                     ;
                     break;//拨码1 
@@ -116,11 +118,12 @@ void main()
                     if(keymsg.status) speed_ctl_output--;
                     break;//减
                 case KEY7: 
-                    ;
+                    if(keymsg.status) user_flag.b9 = ~user_flag.b9;
                     break;//开始
             }
             if(speed_ctl_output>25) speed_ctl_output=25;
             else if(speed_ctl_output<0) speed_ctl_output=0;
+            speed_ctl_output_close = speed_ctl_output;
             sprintf(ch,"speed %d",speed_ctl_output);
             LCD_P6x8Str(39,6,ch);
         }

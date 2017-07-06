@@ -8,9 +8,11 @@
 /*  Variable------------------------------------------------------------------*/
     float d = 0.000091,e = 0,f = 0.41,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
+    uint32 offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP];
-    uint16 steer_plus=87;//差和比系数
+    uint16 steer_plus=87,AD_delay=0;//差和比系数
+    int speed_ctl_output_close;
     
 /*  Function declaration------------------------------------------------------*/
     void bell_set(PTXn_e bell,uint8 data);
@@ -44,14 +46,13 @@ void ser_ctrl(void)
     int16 str_inc;//最后舵机中值
     
     static uint16 ser_pwm;
+    static uint16 circle_time=300;
         
     float real_position;
     
     uint16 temp=0;
     
-    int speed_ctl_output_close;
-    
-    real_position_num = (position_num+ADEEP-ADELAY) % ADEEP;
+    real_position_num = (position_num+ADEEP-AD_delay) % ADEEP;
 
     position_measure();
 
@@ -59,11 +60,18 @@ void ser_ctrl(void)
         ((float)left1/(float)right1>0.8 || (float)right1/(float)left1>0.8) &&\
         (float)left0/(float)left1<1.2 &&\
         (float)right0/(float)right1<1.2 &&\
-        middle<(4*speed_ctl_output) && left2<12) {
+        middle<(4*speed_ctl_output) && left2<8) {
+        AD_delay = 35;
+        circle_time =300;
         printf("6");
         user_flag.b6 = 1;
-        ftm_pwm_duty(STEERFTM,STEERFTM_CH,555);
-        DELAY_MS(30);
+        if(user_flag.b9) offset = 555; else offset = 695;
+        ftm_pwm_duty(STEERFTM,STEERFTM_CH,offset);
+        DELAY_MS(35);
+    }
+    
+    if(AD_delay) {
+        if( !(--circle_time) ) AD_delay=0;
     }
     
     real_position = position[real_position_num];
@@ -76,7 +84,7 @@ void ser_ctrl(void)
     
     
     str_inc = (int)(kpc*real_position+kdc_1*positionerror);
-#if 1
+#if 0
     if(position_num<ADEEP&&temp%6==0) {
         static float Outdata[8];
         Outdata[0] = position[position_num];
@@ -98,14 +106,12 @@ void ser_ctrl(void)
     
 /*  丢线恢复--------------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
-        if(speed_ctl_output) speed_ctl_output_close = speed_ctl_output;
         speed_ctl_output=0;
         user_flag.b7 = 1;
         //str_inc=0;
     }
     else {
-        if(user_flag.b7 && speed_ctl_output_close) 
-            speed_ctl_output = speed_ctl_output_close;
+        speed_ctl_output = speed_ctl_output_close;
         user_flag.b7 = 0;
     }
     
