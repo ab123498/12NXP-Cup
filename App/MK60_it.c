@@ -25,9 +25,10 @@
     uint32 time_sum=0;       //秒级计时
     uint32 PIT0_Time_count;
     int16  encoder1;         //编码器输出
-    uint16 right1,right0,middle,left0,left1,right2,left2;
+    uint16 right1,right0,middle,left0,left1,right2,left2,middle_level[30];
     uint16 position_num=0;
     int8   ch_buffer[81];    //串口接收buffer
+    int temp_sp;
     
 /*  Declare-------------------------------------------------------------------*/
     extern AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
@@ -36,7 +37,15 @@
     extern int speed_ctl_output;
     extern uint8 speed_array[5];
     
-/*  Callback Function -------------------------------------------------------------*/    
+uint16 average(uint16 x[], int len)
+{
+    double sum = 0;
+    for (int i = 0; i < len; i++) // 求总和
+        sum += x[i];
+    return (uint16)sum/len; // 返回平均值
+}
+    
+/*  Callback Function --------------------------------------------------------*/    
 /*!
  *  @brief      UART4中断服务函数
  *  @since      v5.0
@@ -66,7 +75,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
 {
     int16 val;
     static uint32 position_count;
-    static uint16 speed_array_count_num;
+    static uint16 speed_array_count_num,middle_level_count;
     uint8 ch[4];
     
     lptmr_timing_ms(65535);
@@ -89,6 +98,21 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         ser_ctrl();
         position_num++;
     }
+    
+    if(PIT0_Time_count%3==0) {
+        if(middle_level_count % 30) {
+            middle_level[middle_level_count] = middle;
+            if(middle_level_count++ > 30) {
+                middle_level_count =0;
+                if(average(middle_level,30) < 1500) {
+                    temp_sp = speed_ctl_output;
+                    speed_ctl_output =11;
+                }
+                else speed_ctl_output = temp_sp;
+            }
+        }
+    }
+    
     if(PIT0_Time_count%20==0) {
         key_IRQHandler();
     }

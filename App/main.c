@@ -135,6 +135,7 @@ void main()
             if(time_sum != time_sum_close) {      
                 printf("%ds\n",time_sum);
                 time_sum_close = time_sum;
+                printf("sp:%d\n",speed_ctl_output);
             }
 			//printf("%f",test);
             if(user_flag.b4) {
@@ -150,6 +151,7 @@ void main()
             }
             if(user_flag.b8) {
                 printf("888");
+                
                 user_flag.b8 = 0;
             }
         }
