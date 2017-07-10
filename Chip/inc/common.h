@@ -60,15 +60,15 @@ typedef union
         uint32 b7: 1;//丢线
         uint32 b8: 1;//停车
         uint32 b9: 1;//入环打角
-        uint32 b10: 1;
-        uint32 b11: 1;
-        uint32 b12: 1;
-        uint32 b13: 1;
-        uint32 b14: 1;
-        uint32 b15: 1;
-        uint32 b16: 1;
-        uint32 b17: 1;
-        uint32 b18: 1;
+        uint32 b10: 1;//环条件1
+        uint32 b11: 1;//环条件2
+        uint32 b12: 1;//环条件3
+        uint32 b13: 1;//环1左右拐 1左拐
+        uint32 b14: 1;//环2左右拐
+        uint32 b15: 1;//环3左右拐
+        uint32 b16: 1;//环4左右拐
+        uint32 b17: 1;//当前环左右标志
+        uint32 b18: 1;//出环
         uint32 b19: 1;
         uint32 b20: 1;
         uint32 b21: 1;

@@ -10,7 +10,7 @@
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
     uint32 offset;
     int steer_inc,steer_PWM,speed_ctl_output;
-    uint16 real_position_num,s_position[ADEEP];
+    uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
     uint16 steer_plus=87,AD_delay=0;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
@@ -46,11 +46,12 @@ void ser_ctrl(void)
     int16 str_inc;//最后舵机中值
     
     static uint16 ser_pwm;
-    static uint16 circle_time=300;
+    static uint16 circle_time;
         
     float real_position;
     
     static uint16 temp;
+    static uint16 loop_num;
     
     real_position_num = (position_num+ADEEP-AD_delay) % ADEEP;
 
@@ -68,7 +69,7 @@ void ser_ctrl(void)
     user_flag.b12 = \
         left2<8;
     
-    if(user_flag.W[0] >= 0x0400) {
+    if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
         //int i; 
         //for(i=2;i<=5;i++) {
@@ -80,27 +81,42 @@ void ser_ctrl(void)
         //printf("0x%X,",user_flag.B[1]);
     }
         
-    if( user_flag.W[0] >= 0x1C00 ) {
-        AD_delay = 0;
-        circle_time =300;
-        printf("6");
+    if( user_flag.b10 && user_flag.b11 && user_flag.b12 && !user_flag.b6 ) {
+        AD_delay = 35;
+        circle_time =set_cirt;
+        printf("666\n");
         user_flag.b6 = 1;
         chain_speed = speed_ctl_output;
-        speed_ctl_output = 11;
-        if(user_flag.b9) offset = 550; else offset = 690;
+        switch(loop_num) {
+            case 0:
+                user_flag.b17 = user_flag.b13;
+                break;
+            case 1:
+                user_flag.b17 = user_flag.b14;
+                break;
+            case 2:
+                user_flag.b17 = user_flag.b15;
+                break;
+            case 3:
+                user_flag.b17 = user_flag.b16;
+                break;
+        }
+        if(user_flag.b17) offset = 520; else offset = 720;
         ftm_pwm_duty(STEERFTM,STEERFTM_CH,offset);
-        DELAY_MS(25);
+        DELAY_MS(dlyt);
     }
-    
-    if(AD_delay) {
-        if( !(--circle_time) ) {
+
+    if(circle_time>0) {
+        if( --circle_time == 5 ) {
             AD_delay=0;
-            speed_ctl_output=chain_speed;
+            user_flag.b6 = 0;
+            if(loop_num++ > 4) loop_num=0;
+            printf("lp_nm:%d\n",loop_num);
         }
     }
     
     real_position = position[real_position_num];
-    
+    //if(user_flag.b6) { d=0.0009;e=0.08;f=0.4; kdc_1 = 10;}
     kpc=d*real_position*real_position+e*fabsf(real_position)\
         +f;//很明显加这个动态p会乱抖
     
@@ -151,10 +167,10 @@ void ser_ctrl(void)
     if(temp++ ==6*ADEEP) {
         //quicksort(s_position,ADEEP);
         temp=0;
-        printf("L/R%d\n",(int)(1000*(float)left0/(float)right0));
-        printf("R/L%d\n",(int)(1000*(float)right0/(float)left0));
-        printf("l/r%d\n",(int)(1000*(float)left1/(float)right1));
-        printf("r/l%d\n\n",(int)(1000*(float)right1/(float)left1));
+        //printf("L/R%d\n",(int)(1000*(float)left0/(float)right0));
+        //printf("R/L%d\n",(int)(1000*(float)right0/(float)left0));
+        //printf("l/r%d\n",(int)(1000*(float)left1/(float)right1));
+        //printf("r/l%d\n\n",(int)(1000*(float)right1/(float)left1));
         //printf("l2%d\n",left2);
     }
 }
@@ -165,6 +181,16 @@ void position_measure(void)
     float ADflag;
     AD_dif=(left0+left1)-(right0+right1);//左减右
     AD_sum=left0+right0+left1+right1;
+    //if(user_flag.b6) {
+    //    if(user_flag.b17) {
+    //        AD_dif=middle-right1;//右减中
+    //        AD_sum=middle+right1;
+    //    }
+    //    else {
+    //        AD_dif=left1-middle;//左减中
+    //        AD_sum=left1+middle;
+    //    }
+    //}
     ADflag = (float)AD_dif/(float)AD_sum;
     position[position_num] = (int)(ADflag*(float)steer_plus);
     //s_position[position_num] = (uint16)position[position_num];

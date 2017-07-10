@@ -103,12 +103,17 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         if(middle_level_count % 30) {
             middle_level[middle_level_count] = middle;
             if(middle_level_count++ > 30) {
+                char ch_18[1];
                 middle_level_count =0;
-                if(average(middle_level,30) < 1500) {
+                if(average(middle_level,30) < 2000) {
                     temp_sp = speed_ctl_output;
-                    speed_ctl_output =11;
+                    user_flag.b18 = 1;
                 }
-                else speed_ctl_output = temp_sp;
+                else {
+                    user_flag.b18 = 0;
+                }
+                sprintf(ch_18,"%d",user_flag.b18);
+                LCD_P6x8Str(96,5,ch_18);
             }
         }
     }

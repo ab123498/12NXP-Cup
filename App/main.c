@@ -49,6 +49,7 @@
     extern uint16 real_position_num;
     extern int speed_ctl_output;
     extern int speed_ctl_output_close;
+    extern uint16 dlyt,set_cirt;
 
 /*  Run Function -------------------------------------------------------------*/    
 void main()
@@ -56,6 +57,7 @@ void main()
     uint16 time_sum_close;
     KEY_MSG_t keymsg;
     char ch[10];  
+    char loop_ch[4];
        
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
@@ -94,19 +96,24 @@ void main()
             
             switch(keymsg.key) {
                 case KEY0: 
-                    ;
+                    if(keymsg.status == 0 )     user_flag.b13 = 1;
+                    else if(keymsg.status == 1) user_flag.b13 = 0;
                     break;//拨码0
                 case KEY1: 
-                    ;
+                    if(keymsg.status == 0 )     user_flag.b14 = 1;
+                    else if(keymsg.status == 1) user_flag.b14 = 0;
                     break;//拨码1 
                 case KEY2: 
-                    ;
+                    if(keymsg.status == 0 )     user_flag.b15 = 1;
+                    else if(keymsg.status == 1) user_flag.b15 = 0;
                     break;//拨码2
                 case KEY3: 
-                    ;
+                    if(keymsg.status == 0 )     user_flag.b16 = 1;
+                    else if(keymsg.status == 1) user_flag.b16 = 0;
                     break;//拨码3
                 case KEY4: 
-                    ;
+                    if(keymsg.status) dlyt += 10;
+                    printf("dlyt:%d\n",dlyt);
                     break;//切换选
                 case KEY5: 
                     if(keymsg.status) {
@@ -118,14 +125,21 @@ void main()
                     if(keymsg.status) speed_ctl_output--;
                     break;//减
                 case KEY7: 
-                    if(keymsg.status) user_flag.b9 = ~user_flag.b9;
+                    if(keymsg.status) set_cirt -= 50;
+                    printf("set_cirt:%d\n",set_cirt);
                     break;//开始
             }
             if(speed_ctl_output>25) speed_ctl_output=25;
             else if(speed_ctl_output<0) speed_ctl_output=0;
+            if(dlyt>300) dlyt=180;
+            else if(dlyt<180) dlyt=180;
+            if(set_cirt>700) set_cirt=700;
+            else if(set_cirt<200) set_cirt=700;
             speed_ctl_output_close = speed_ctl_output;
             sprintf(ch,"speed %d",speed_ctl_output);
             LCD_P6x8Str(39,6,ch);
+            sprintf(loop_ch,"%d%d%d%d",user_flag.b13,user_flag.b14,user_flag.b15,user_flag.b16);
+            LCD_P6x8Str(0,6,loop_ch);
         }
         if(user_flag.DW != 0) {
             poll_printf();
@@ -136,24 +150,20 @@ void main()
                 printf("%ds\n",time_sum);
                 time_sum_close = time_sum;
                 printf("sp:%d\n",speed_ctl_output);
+                printf("b6:%d\n",user_flag.b6);
+                printf("b17:%d\n",user_flag.b17);
+                if(user_flag.b7) {
+                    printf("777");
+                    user_flag.b7 = 0;
+                }
+                if(user_flag.b8) {
+                    printf("888");
+                    user_flag.b8 = 0;
+                    speed_ctl_output = 0;
+                    while(1);
+                }
             }
 			//printf("%f",test);
-            if(user_flag.b4) {
-                
-            }
-            if(user_flag.b6) {
-                printf("666");
-                user_flag.b6 = 0;
-            }
-            if(user_flag.b7) {
-                printf("777");
-                user_flag.b7 = 0;
-            }
-            if(user_flag.b8) {
-                printf("888");
-                
-                user_flag.b8 = 0;
-            }
         }
         
         span_main_cycle = lptmr_time_get_ms();
