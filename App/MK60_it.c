@@ -28,7 +28,7 @@
     uint16 right1,right0,middle,left0,left1,right2,left2,middle_level[30];
     uint16 position_num=0;
     int8   ch_buffer[81];    //串口接收buffer
-    int temp_sp;
+    int temp_sp,stop_time=2000,stop_num;
     
 /*  Declare-------------------------------------------------------------------*/
     extern AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
@@ -83,6 +83,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     val = ftm_quad_get(FTM1);                           //获取FTM 正交解码 的脉冲数(负数表示反方向)
     ftm_quad_clean(FTM1);
     speed_array[speed_array_count_num] = -val;
+    if(user_flag.b20) speed_ctl_output = 0;
     pwm = Getspeed(speed_ctl_output,-val);//
     set_speed(pwm);
     
@@ -145,7 +146,17 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     position_count++;
     speed_array_count_num++;
     
-    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) { user_flag.b8=1; stop(); }
+    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) { 
+        user_flag.b8=1; //stop(); 
+    }
+    
+    if(user_flag.b8) {
+        if( --stop_time < 5 ) {
+            user_flag.b8 = 0;
+            stop_time = 2000;
+            if(stop_num++ == 1) user_flag.b20 = 1;
+        }
+    }
     
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
     PIT_Flag_Clear(PIT0);                               //清中断标志位

@@ -64,7 +64,7 @@ void stop(void)
     ftm_pwm_duty(MOTORFTM,MOTORFTM_B,0);
     DELAY_MS(10);
     ftm_pwm_duty(MOTORFTM,MOTORFTM_B,0);
-    ftm_pwm_duty(MOTORFTM,MOTORFTM_A,400);
-    DELAY_MS(200);
+    ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);
+    DELAY_MS(1);
     ftm_pwm_duty(MOTORFTM,MOTORFTM_A,0);
 }

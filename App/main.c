@@ -158,7 +158,6 @@ void main()
                 }
                 if(user_flag.b8) {
                     printf("888");
-                    speed_ctl_output = 0;
                 }
             }
 			//printf("%f",test);

@@ -8,7 +8,7 @@
 /*  Variable------------------------------------------------------------------*/
     float d = 0.000091,e = 0,f = 0.31,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
-    uint32 offset;
+    int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
     uint16 steer_plus=87,AD_delay=0;//差和比系数
@@ -82,10 +82,11 @@ void ser_ctrl(void)
     }
         
     if( user_flag.b10 && user_flag.b11 && user_flag.b12 && !user_flag.b6 ) {
-        AD_delay = 35;
+        AD_delay = 5;
         circle_time =set_cirt;
         printf("666\n");
         user_flag.b6 = 1;
+        user_flag.b19 = 1;
         chain_speed = speed_ctl_output;
         speed_ctl_output = 13;
         switch(loop_num) {
@@ -102,9 +103,7 @@ void ser_ctrl(void)
                 user_flag.b17 = user_flag.b16;
                 break;
         }
-        if(user_flag.b17) offset = 520; else offset = 720;
-        ftm_pwm_duty(STEERFTM,STEERFTM_CH,offset);
-        DELAY_MS(dlyt);
+        if(user_flag.b17) offset = 480; else offset = 720;
     }
 
     if(circle_time>0) {
@@ -114,6 +113,7 @@ void ser_ctrl(void)
             if(loop_num++ > 4) loop_num=0;
             printf("lp_nm:%d\n",loop_num);
         }
+        if((set_cirt-circle_time) == 60) user_flag.b19 = 0;
         if(middle > 2450) AD_delay = 0;
     }
     
@@ -149,7 +149,7 @@ void ser_ctrl(void)
     
 /*  丢线停车--------------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
-        speed_ctl_output=5;
+        if(!user_flag.b6) speed_ctl_output=5;
         user_flag.b7 = 1;
         //str_inc=0;
     }
@@ -164,6 +164,7 @@ void ser_ctrl(void)
     if(ser_pwm>STEERH) {   ser_pwm=STEERH;    bell_set(BELLPORT,BELLON); } else bell_set(BELLPORT,BELLOFF);
     if(ser_pwm<STEERL) {   ser_pwm=STEERL;    bell_set(BELLPORT,BELLON); } else bell_set(BELLPORT,BELLOFF);
     
+    if(user_flag.b19) ser_pwm = offset;
     ftm_pwm_duty(STEERFTM,STEERFTM_CH,ser_pwm);   
     
     if(temp++ ==6*ADEEP) {
@@ -196,7 +197,7 @@ void position_measure(void)
     ADflag = (float)AD_dif/(float)AD_sum;
     position[position_num] = (int)(ADflag*(float)steer_plus);
     //s_position[position_num] = (uint16)position[position_num];
-    if(position[position_num] > (steer_plus-5) || \
-       position[position_num] < (-steer_plus+5) )  
+    if(position[position_num] > (steer_plus-2) || \
+       position[position_num] < (-steer_plus+2) )  
        position[position_num]= position[(position_num + ADEEP - 1) % ADEEP];//防止丢线阿
 }
