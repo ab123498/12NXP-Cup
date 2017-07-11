@@ -67,7 +67,7 @@ void ser_ctrl(void)
         middle<(4*speed_ctl_output);
     
     user_flag.b12 = \
-        left2<8;
+        left2<18;
     
     if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
