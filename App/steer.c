@@ -6,7 +6,7 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.000101,e = 0,f = 0.31,\
+    float d = 0.000091,e = 0,f = 0.31,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
     uint32 offset;
     int steer_inc,steer_PWM,speed_ctl_output;
@@ -87,6 +87,7 @@ void ser_ctrl(void)
         printf("666\n");
         user_flag.b6 = 1;
         chain_speed = speed_ctl_output;
+        speed_ctl_output = 13;
         switch(loop_num) {
             case 0:
                 user_flag.b17 = user_flag.b13;
@@ -113,6 +114,7 @@ void ser_ctrl(void)
             if(loop_num++ > 4) loop_num=0;
             printf("lp_nm:%d\n",loop_num);
         }
+        if(middle > 2450) AD_delay = 0;
     }
     
     real_position = position[real_position_num];
@@ -147,12 +149,12 @@ void ser_ctrl(void)
     
 /*  丢线停车--------------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
-        speed_ctl_output=0;
+        speed_ctl_output=5;
         user_flag.b7 = 1;
         //str_inc=0;
     }
     else {
-        speed_ctl_output = speed_ctl_output_close;
+        if(!user_flag.b8 && !user_flag.b6) speed_ctl_output = speed_ctl_output_close;
         user_flag.b7 = 0;
     }
     

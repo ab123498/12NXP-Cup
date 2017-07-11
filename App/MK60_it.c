@@ -99,24 +99,24 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         position_num++;
     }
     
-    if(PIT0_Time_count%3==0) {
-        if(middle_level_count % 30) {
-            middle_level[middle_level_count] = middle;
-            if(middle_level_count++ > 30) {
-                char ch_18[1];
-                middle_level_count =0;
-                if(average(middle_level,30) < 2000) {
-                    temp_sp = speed_ctl_output;
-                    user_flag.b18 = 1;
-                }
-                else {
-                    user_flag.b18 = 0;
-                }
-                sprintf(ch_18,"%d",user_flag.b18);
-                LCD_P6x8Str(96,5,ch_18);
-            }
-        }
-    }
+    //if(PIT0_Time_count%3==0) {
+    //    if(middle_level_count % 30) {
+    //        middle_level[middle_level_count] = middle;
+    //        if(middle_level_count++ > 30) {
+    //            char ch_18[1];
+    //            middle_level_count =0;
+    //            if(average(middle_level,30) < 2000) {
+    //                temp_sp = speed_ctl_output;
+    //                user_flag.b18 = 1;
+    //            }
+    //            else {
+    //                user_flag.b18 = 0;
+    //            }
+    //            sprintf(ch_18,"%d",user_flag.b18);
+    //            LCD_P6x8Str(96,5,ch_18);
+    //        }
+    //    }
+    //}
     
     if(PIT0_Time_count%20==0) {
         key_IRQHandler();
@@ -145,7 +145,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     position_count++;
     speed_array_count_num++;
     
-    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) user_flag.b8=1;
+    if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) { user_flag.b8=1; stop(); }
     
     span_pit_cycle = lptmr_time_get_ms();               //获得pit周期
     PIT_Flag_Clear(PIT0);                               //清中断标志位
