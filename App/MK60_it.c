@@ -153,7 +153,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     if(user_flag.b8) {
         if( --stop_time < 5 ) {
             user_flag.b8 = 0;
-            stop_time = 2000;
+            stop_time = 200;
             if(stop_num++ == 1) user_flag.b20 = 1;
         }
     }

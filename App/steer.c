@@ -6,12 +6,12 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.000091,e = 0,f = 0.31,\
+    float d = 0.000096,e = 0,f = 0.36,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
     int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
-    uint16 steer_plus=87,AD_delay=0;//差和比系数
+    uint16 steer_plus=88,AD_delay=0;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
 /*  Function declaration------------------------------------------------------*/
@@ -67,7 +67,7 @@ void ser_ctrl(void)
         middle<(4*speed_ctl_output);
     
     user_flag.b12 = \
-        left2<18;
+        left2<17&&left2>10;
     
     if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
@@ -110,6 +110,7 @@ void ser_ctrl(void)
         if( --circle_time == 5 ) {
             AD_delay=0;
             user_flag.b6 = 0;
+            speed_ctl_output = speed_ctl_output_close;
             if(loop_num++ > 4) loop_num=0;
             printf("lp_nm:%d\n",loop_num);
         }
@@ -149,7 +150,7 @@ void ser_ctrl(void)
     
 /*  丢线停车--------------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
-        if(!user_flag.b6) speed_ctl_output=5;
+        if(!user_flag.b6) speed_ctl_output=13;
         user_flag.b7 = 1;
         //str_inc=0;
     }
