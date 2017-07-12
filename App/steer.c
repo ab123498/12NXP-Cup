@@ -6,18 +6,18 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.000096,e = 0,f = 0.36,\
+    float d = 0.000091,e = 0,f = 0.31,\
           position[ADEEP],positionerror,kpc,kdc_1=10 ;
     int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
-    uint16 steer_plus=88,AD_delay=0;//差和比系数
+    uint16 steer_plus=98,AD_delay=0;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
 /*  Function declaration------------------------------------------------------*/
     void bell_set(PTXn_e bell,uint8 data);
 /*  Declare-------------------------------------------------------------------*/
-    extern uint16 right1,right0,left2,left0,left1,middle;
+    extern uint16 right1,right0,right2,left2,left0,left1,middle;
     extern uint16 position_num;//差和比循环队列的头部
     extern Dtype user_flag;
 /*  Function -----------------------------------------------------------------*/
@@ -64,10 +64,10 @@ void ser_ctrl(void)
          (float)left0/(float)right0>1    && (float)right0/(float)left0<=1   );
     
     user_flag.b11 = \
-        middle<(4*speed_ctl_output);
+        left0<(75)&&right0<(75);
     
     user_flag.b12 = \
-        left2<17&&left2>10;
+        left2<18&&right2<18;
     
     if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
@@ -115,7 +115,7 @@ void ser_ctrl(void)
             printf("lp_nm:%d\n",loop_num);
         }
         if((set_cirt-circle_time) == 60) user_flag.b19 = 0;
-        if(middle > 2450) AD_delay = 0;
+        if(right0>1800||left0>1800) AD_delay = 0;
     }
     
     real_position = position[real_position_num];

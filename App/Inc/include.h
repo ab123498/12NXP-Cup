@@ -9,8 +9,21 @@
 
     #define ADEEP   100//队列的存储深度
     #define ADNUM   (ADEEP-1)
-    #define ADWIDE  3  //几毫秒出一次ad及差和比 
-    #define ADELAY  
+    #define ADWIDE  3  //几毫秒出一次ad及差和比  
+
+    #define DX 0.000091
+    #define EX 0
+    #define FX 0.31
+    #define DS 10
+    #define DLYT 180 //打脚延时
+    #define SP 98    //打脚因数
+    #define ADELAY 5 //环内历史值
+    #define CIRT (700/3) //重入环时间
+    #define OUTC 1800 //出环值
+    #define L2R2TOP (1100/40)//最边电感识别环范围
+    #define L2R2BOT (160/40)
+    #define L0R0LOW (1900/40)//入环衰减打脚值
+
 /*
  * Include 用户自定义的头文件
  */

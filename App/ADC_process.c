@@ -44,7 +44,7 @@ void proc_AD_conv(void)
             LCD_Show_Number(0,2  ,ad_2.max);
             LCD_Show_Number(96,2 ,ad_4.max);
             LCD_Show_Number(0,4  ,ad_5.max);
-            LCD_Show_Number(52,3 ,ad_6.max);
+            LCD_Show_Number(96,4 ,ad_6.max);
             //LCD_Show_Number(0,3  ,ad_5.max);
             //LCD_Show_Number(30,3 ,ad_6.max);
         }
