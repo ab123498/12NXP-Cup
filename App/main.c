@@ -135,7 +135,7 @@ void main()
             else if(dlyt<180) dlyt=180;
             if(set_cirt>700) set_cirt=700;
             else if(set_cirt<200) set_cirt=700;
-            speed_ctl_output_close = speed_ctl_output;
+            if(keymsg.status != 2)speed_ctl_output_close = speed_ctl_output;
             sprintf(ch,"speed %2d",speed_ctl_output);
             LCD_P6x8Str(39,6,ch);
             sprintf(loop_ch,"%d%d%d%d",user_flag.b13,user_flag.b14,user_flag.b15,user_flag.b16);

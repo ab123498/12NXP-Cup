@@ -11,7 +11,7 @@
     int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
-    uint16 steer_plus=98,AD_delay=0;//差和比系数
+    uint16 steer_plus=92,AD_delay=0;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
 /*  Function declaration------------------------------------------------------*/
@@ -115,7 +115,10 @@ void ser_ctrl(void)
             printf("lp_nm:%d\n",loop_num);
         }
         if((set_cirt-circle_time) == 60) user_flag.b19 = 0;
-        if(right0>1800||left0>1800) AD_delay = 0;
+        if(right0>1800||left0>1800) { 
+            AD_delay = 0; 
+            speed_ctl_output = speed_ctl_output_close;
+        }
     }
     
     real_position = position[real_position_num];
