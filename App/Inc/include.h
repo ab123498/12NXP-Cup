@@ -17,8 +17,8 @@
     #define DS              10
 
     #define L0R0LOW         (3000/40)       //入环衰减打脚值
-    #define L2R2TOP         (720/40)        //最边电感识别环范围
-    #define L2R2BOT         (160/40)
+    #define L2R2TOP         (720)        //最边电感识别环范围
+    #define L2R2BOT         25
 
     #define SP              98              //打脚因数
     #define ADELAY          5               //环内历史值

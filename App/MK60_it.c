@@ -93,8 +93,8 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
         left1 = ad_2.max/40;
         left0 = ad_1.max/40;
         right1= ad_4.max/40;
-        left2= ad_5.max/40;
-        right2= ad_6.max/40;
+        left2= ad_5.max;
+        right2= ad_6.max;
         position_num%=ADEEP;
         ser_ctrl();
         position_num++;

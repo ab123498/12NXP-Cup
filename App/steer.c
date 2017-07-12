@@ -67,7 +67,7 @@ void ser_ctrl(void)
         left0<(L0R0LOW)&&right0<(L0R0LOW);
     
     user_flag.b12 = \
-        left2<L0R0LOW&&right2<L0R0LOW;
+        left2<L2R2TOP && right2<L2R2TOP && left2>L2R2BOT && right2>L2R2BOT;
     
     if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
