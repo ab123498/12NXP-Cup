@@ -6,12 +6,12 @@
 /*  Define--------------------------------------------------------------------*/
     #define MAXSPEED 20
 /*  Variable------------------------------------------------------------------*/
-    float d = 0.000091,e = 0,f = 0.31,\
-          position[ADEEP],positionerror,kpc,kdc_1=10 ;
+    float d = DX,e = EX,f = FX,\
+          position[ADEEP],positionerror,kpc,kdc_1=DS ;
     int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
-    uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=700;
-    uint16 steer_plus=92,AD_delay=0;//差和比系数
+    uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=CIRT;
+    uint16 steer_plus=SP,AD_delay=0;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
 /*  Function declaration------------------------------------------------------*/
@@ -64,10 +64,10 @@ void ser_ctrl(void)
          (float)left0/(float)right0>1    && (float)right0/(float)left0<=1   );
     
     user_flag.b11 = \
-        left0<(75)&&right0<(75);
+        left0<(L0R0LOW)&&right0<(L0R0LOW);
     
     user_flag.b12 = \
-        left2<18&&right2<18;
+        left2<L0R0LOW&&right2<L0R0LOW;
     
     if(user_flag.W[0] >= 0x0400 && !user_flag.b6 ) {
         //char *temp;
@@ -82,7 +82,7 @@ void ser_ctrl(void)
     }
         
     if( user_flag.b10 && user_flag.b11 && user_flag.b12 && !user_flag.b6 ) {
-        AD_delay = 5;
+        AD_delay = ADELAY;
         circle_time =set_cirt;
         printf("666\n");
         user_flag.b6 = 1;
@@ -114,8 +114,8 @@ void ser_ctrl(void)
             if(loop_num++ > 4) loop_num=0;
             printf("lp_nm:%d\n",loop_num);
         }
-        if((set_cirt-circle_time) == 60) user_flag.b19 = 0;
-        if(right0>1800||left0>1800) { 
+        if((set_cirt-circle_time) == DLYT) user_flag.b19 = 0;
+        if(right0>OUTC||left0>OUTC) { 
             AD_delay = 0; 
             speed_ctl_output = speed_ctl_output_close;
         }

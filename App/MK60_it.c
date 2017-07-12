@@ -28,7 +28,7 @@
     uint16 right1,right0,middle,left0,left1,right2,left2,middle_level[30];
     uint16 position_num=0;
     int8   ch_buffer[81];    //串口接收buffer
-    int temp_sp,stop_time=2000,stop_num;
+    int temp_sp,stop_time=STOPT,stop_num;
     
 /*  Declare-------------------------------------------------------------------*/
     extern AD_V ad_1,ad_2,ad_3,ad_4,ad_5,ad_6;
@@ -153,7 +153,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     if(user_flag.b8) {
         if( --stop_time < 5 ) {
             user_flag.b8 = 0;
-            stop_time = 200;
+            stop_time = STOPT;
             if(stop_num++ == 1) user_flag.b20 = 1;
         }
     }

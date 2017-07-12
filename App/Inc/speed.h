@@ -4,7 +4,7 @@
 #define MOTORFTM FTM2
 #define MOTORFTM_A FTM_CH0
 #define MOTORFTM_B FTM_CH1
-#define SPEEDEDGE 500
+
 /*  Enum----------------------------------------------------------------------*/
 
 /*  Function declaration------------------------------------------------------*/
