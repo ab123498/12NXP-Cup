@@ -24,6 +24,7 @@
     
 /*  Variable------------------------------------------------------------------*/
 	uint32 span_main_cycle;//大循环时间
+    uint16 fangan;
 /*  Function declaration------------------------------------------------------*/
 	void bell_init(PTXn_e bell,uint8);
     void bell_set(PTXn_e bell,uint8 data);
@@ -50,7 +51,9 @@
     extern int speed_ctl_output;
     extern int speed_ctl_output_close;
     extern uint16 dlyt,set_cirt;
-
+    extern uint16 steer_plus;
+    extern uint16 lrl;
+    extern float d,e,f,kdc_1;
 /*  Run Function -------------------------------------------------------------*/    
 void main()
 {
@@ -58,6 +61,9 @@ void main()
     KEY_MSG_t keymsg;
     char ch[10];  
     char loop_ch[4];
+    char chfa[4];
+    char chsp[4];
+    char chlr[6];
        
 	led_all_init();
     bell_init(BELLPORT,BELLOFF);                          //输入为 0 不响
@@ -92,7 +98,7 @@ void main()
         span_main_cycle = lptmr_time_get_ms();            //获得大循环周期
         proc_AD_conv();
         if(get_key_msg(&keymsg)) {
-            printf("\nKEY%d,type%d",keymsg.key,keymsg.status);
+            //printf("\nKEY%d,type%d",keymsg.key,keymsg.status);
             
             switch(keymsg.key) {
                 case KEY0: 
@@ -112,8 +118,7 @@ void main()
                     else if(keymsg.status == 1) user_flag.b16 = 0;
                     break;//拨码3
                 case KEY4: 
-                    if(keymsg.status) dlyt += 10;
-                    printf("dlyt:%d\n",dlyt);
+                    if(keymsg.status) fangan++;
                     break;//切换选
                 case KEY5: 
                     if(keymsg.status) {
@@ -122,24 +127,46 @@ void main()
                     }
                     break;//加
                 case KEY6: 
-                    if(keymsg.status) speed_ctl_output--;
+                    if(keymsg.status) lrl+=100;
                     break;//减
                 case KEY7: 
-                    if(keymsg.status) set_cirt -= 50;
-                    printf("set_cirt:%d\n",set_cirt);
-                    break;//开始
+                    if(keymsg.status) steer_plus++;
             }
-            if(speed_ctl_output>25) speed_ctl_output=25;
-            else if(speed_ctl_output<0) speed_ctl_output=0;
-            if(dlyt>300) dlyt=180;
-            else if(dlyt<180) dlyt=180;
-            if(set_cirt>700) set_cirt=700;
-            else if(set_cirt<200) set_cirt=700;
-            if(keymsg.status != 2)speed_ctl_output_close = speed_ctl_output;
-            sprintf(ch,"speed %2d",speed_ctl_output);
-            LCD_P6x8Str(39,6,ch);
-            sprintf(loop_ch,"%d%d%d%d",user_flag.b13,user_flag.b14,user_flag.b15,user_flag.b16);
-            LCD_P6x8Str(0,6,loop_ch);
+            
+            if(keymsg.status != KEY_HOLD ) {
+                if(speed_ctl_output>25) speed_ctl_output=0;
+                if(lrl>3800) lrl=3000;
+                if(fangan>3) fangan=0;
+                if(steer_plus>105) steer_plus=80;
+                switch(fangan) {
+                case 0:
+                        speed_ctl_output=13;
+                        break;
+                case 1:
+                        speed_ctl_output=15;
+                        break;
+                case 2:
+                        speed_ctl_output=16;
+                        d = 0.000101;
+                        kdc_1 = 20;
+                        break;
+                case 3:
+                        speed_ctl_output=17;
+                        kdc_1 = 14;
+                        break;
+                }
+                sprintf(chlr,"LR %4d",lrl);
+                LCD_P6x8Str(46,4,chlr);
+                sprintf(chsp,"SP%3d",steer_plus);
+                LCD_P6x8Str(46,5,chsp);
+                speed_ctl_output_close = speed_ctl_output;
+                sprintf(chfa,"mod%1d",fangan);
+                LCD_P6x8Str(92,6,chfa);
+                sprintf(ch,"speed %2d",speed_ctl_output);
+                LCD_P6x8Str(39,6,ch);
+                sprintf(loop_ch,"%d%d%d%d",user_flag.b13,user_flag.b14,user_flag.b15,user_flag.b16);
+                LCD_P6x8Str(0,6,loop_ch);
+            }
         }
         if(user_flag.DW != 0) {
             poll_printf();

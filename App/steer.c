@@ -11,7 +11,7 @@
     int offset;
     int steer_inc,steer_PWM,speed_ctl_output;
     uint16 real_position_num,s_position[ADEEP],dlyt=180,set_cirt=CIRT;
-    uint16 steer_plus=SP,AD_delay=0;//差和比系数
+    uint16 steer_plus=SP,AD_delay=0,lrl=L0R0LOW;//差和比系数
     int speed_ctl_output_close;
     static int chain_speed;
 /*  Function declaration------------------------------------------------------*/
@@ -64,7 +64,7 @@ void ser_ctrl(void)
          (float)left0/(float)right0>1    && (float)right0/(float)left0<=1   );
     
     user_flag.b11 = \
-        left0<(L0R0LOW)&&right0<(L0R0LOW);
+        left0<(lrl/40)&&right0<(lrl/40)&&left0>(L0R0HIG)&&right0>(L0R0HIG);
     
     user_flag.b12 = \
         left2<L2R2TOP && right2<L2R2TOP && left2>L2R2BOT && right2>L2R2BOT;
@@ -88,7 +88,7 @@ void ser_ctrl(void)
         user_flag.b6 = 1;
         user_flag.b19 = 1;
         chain_speed = speed_ctl_output;
-        speed_ctl_output = 13;
+        speed_ctl_output = RHSD;
         switch(loop_num) {
             case 0:
                 user_flag.b17 = user_flag.b13;
@@ -150,6 +150,8 @@ void ser_ctrl(void)
     //speed_ctl_output = (s_position[ADEEP-1]/15)+12;
     //if(speed_ctl_output>18) speed_ctl_output=18;
     //else if(speed_ctl_output<0) speed_ctl_output=0;
+    if(left1<5 || right1<5) speed_ctl_output =13;
+    else speed_ctl_output = speed_ctl_output_close;
     
 /*  丢线停车--------------------------------------------------------------BEG*/
     if((left1==0)&&(left0==0)&&(right1==0)&&(right0==0)) {
