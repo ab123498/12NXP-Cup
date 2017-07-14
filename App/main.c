@@ -137,22 +137,21 @@ void main()
                 if(speed_ctl_output>25) speed_ctl_output=0;
                 if(lrl>3800) lrl=3000;
                 if(fangan>3) fangan=0;
-                if(steer_plus>105) steer_plus=80;
+                if(steer_plus>115) steer_plus=80;
                 switch(fangan) {
                 case 0:
-                        speed_ctl_output=13;
                         break;
                 case 1:
-                        speed_ctl_output=15;
+                        kdc_1 = 10;
                         break;
                 case 2:
-                        speed_ctl_output=16;
                         d = 0.000101;
-                        kdc_1 = 20;
+                        kdc_1 = 12;
                         break;
                 case 3:
-                        speed_ctl_output=17;
-                        kdc_1 = 14;
+                        d = 0.000101;
+                        f = 0.36;
+                        kdc_1 = 20;
                         break;
                 }
                 sprintf(chlr,"LR %4d",lrl);

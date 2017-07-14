@@ -14,21 +14,21 @@
     #define DX              0.000091
     #define EX              0
     #define FX              0.31
-    #define DS              12
+    #define DS              10
 
-    #define L0R0LOW         (3500)       //入环衰减打脚值
+    #define L0R0LOW         (3300)          //入环衰减打脚值
     #define L0R0HIG         (720/40)        //入环衰减打脚值
-    #define L2R2TOP         (900)           //最边电感识别环范围
+    #define L2R2TOP         (1200)          //最边电感识别环范围
     #define L2R2BOT         25
 
-    #define SP              98              //打脚因数
+    #define SP              95              //打脚因数
     #define ADELAY          0               //环内历史值
     #define DLYT            (180/3)         //打脚延时
-    #define CIRT            (600/3)         //重入环时间
+    #define CIRT            (1500/3)         //重入环时间
     #define OUTC            1800            //出环值
 
     #define STOPT           200             //停车延时
-    #define SPEEDEDGE       500             
+    #define SPEEDEDGE       700             
 
     #define RHSD            13//入环系数
 
