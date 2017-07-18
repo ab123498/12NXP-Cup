@@ -21,7 +21,7 @@
     #define L2R2TOP         (1200)          //最边电感识别环范围
     #define L2R2BOT         25
 
-    #define SP              95              //打脚因数
+    #define SP              100              //打脚因数
     #define ADELAY          0               //环内历史值
     #define DLYT            (180/3)         //打脚延时
     #define CIRT            (1500/3)         //重入环时间

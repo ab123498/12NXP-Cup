@@ -147,7 +147,7 @@ void PIT0_IRQHandler(void)//！！！命名：count是记中断次数的，num�
     speed_array_count_num++;
     
     if( !(gpio_get(PTD4) && gpio_get(PTD6)) ) { 
-        user_flag.b8=1; //stop(); 
+        //user_flag.b8=1; //stop(); 
     }
     
     if(user_flag.b8) {
